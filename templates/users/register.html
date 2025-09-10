@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - DrugTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                </h3>
+                <p class="mb-0 mt-2">Join the DrugTrack Supply Chain Network</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person me-1"></i>First Name *
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.first_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person me-1"></i>Last Name *
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.last_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="bi bi-at me-1"></i>Username *
+                        </label>
+                        {{ form.username }}
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="bi bi-envelope me-1"></i>Email Address *
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.role.id_for_label }}" class="form-label">
+                            <i class="bi bi-briefcase me-1"></i>Role *
+                        </label>
+                        {{ form.role }}
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Select your role to access the appropriate dashboard and features.
+                        </div>
+                        {% if form.role.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.role.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.organization.id_for_label }}" class="form-label">
+                            <i class="bi bi-building me-1"></i>Organization
+                        </label>
+                        {{ form.organization }}
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Hospital, Pharmaceutical Company, or Regulatory Body name (Optional)
+                        </div>
+                        {% if form.organization.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.organization.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.phone_number.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                <i class="bi bi-lock me-1"></i>Password *
+                            </label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password1.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                <i class="bi bi-lock-fill me-1"></i>Confirm Password *
+                            </label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password2.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">
+                            Already have an account? 
+                            <a href="{% url 'users:login' %}" class="text-decoration-none">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Login here
+                            </a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Role Information Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Role Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-primary">
+                            <i class="bi bi-building me-1"></i>Pharmaceutical Company
+                        </h6>
+                        <small>Manage drug production, batch tracking, and distribution to hospitals and pharmacies.</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-success">
+                            <i class="bi bi-hospital me-1"></i>Hospital
+                        </h6>
+                        <small>Track inventory, monitor expiry dates, and manage cold-chain storage for vaccines.</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-warning">
+                            <i class="bi bi-shield-check me-1"></i>Regulator
+                        </h6>
+                        <small>Monitor compliance, verify drug authenticity, and oversee supply chain integrity.</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-info">
+                            <i class="bi bi-person me-1"></i>Patient
+                        </h6>
+                        <small>Verify drug authenticity using QR codes and track medication history.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,480 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Forecast Analytics - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 4px solid #4f46e5;
+        height: 100%;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .metric-big {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1;
+    }
+    
+    .metric-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+    }
+    
+    .drug-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .table th {
+        background: #f8fafc;
+        border: none;
+        font-weight: 600;
+        color: #475569;
+        padding: 1rem;
+    }
+    
+    .table td {
+        border: none;
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .growth-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .growth-positive {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .growth-negative {
+        background: #fef2f2;
+        color: #991b1b;
+    }
+    
+    .growth-neutral {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    
+    .risk-high {
+        color: #dc2626;
+    }
+    
+    .risk-medium {
+        color: #ea580c;
+    }
+    
+    .risk-low {
+        color: #16a34a;
+    }
+    
+    .alert-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .insight-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .insight-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .icon-success {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+    
+    .icon-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .icon-danger {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .icon-info {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="analytics-header">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="h2 mb-3">
+                    <i class="fas fa-chart-bar me-3"></i>
+                    Forecast Analytics Dashboard
+                </h1>
+                <p class="mb-0 opacity-90">
+                    Comprehensive analysis of drug demand patterns, trends, and risk assessments
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'ai_forecast:forecast' %}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Forecast
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-big text-primary">{{ total_drugs }}</div>
+                <div class="metric-label">Total Drugs Tracked</div>
+                <small class="text-muted">Active in inventory system</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-big text-success">{{ total_demand|floatformat:0 }}</div>
+                <div class="metric-label">Annual Demand</div>
+                <small class="text-muted">Total units (last 12 months)</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-big text-warning">{{ avg_volatility }}</div>
+                <div class="metric-label">Avg Volatility</div>
+                <small class="text-muted">Demand variation index</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-big text-info">{{ high_growth_drugs|length }}</div>
+                <div class="metric-label">High Growth Drugs</div>
+                <small class="text-muted">>5% monthly growth</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Insights -->
+    <div class="row mb-4">
+        <div class="col-lg-4 mb-3">
+            <div class="alert alert-success alert-card">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-trending-up fa-2x me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">High Growth Drugs</h6>
+                        <p class="mb-0">{{ high_growth_drugs|length }} drugs showing strong growth trends</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="alert alert-warning alert-card">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">High Risk Drugs</h6>
+                        <p class="mb-0">{{ high_risk_drugs|length }} drugs with high demand volatility</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="alert alert-info alert-card">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-pills fa-2x me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">Top Performers</h6>
+                        <p class="mb-0">{{ top_drugs|slice:":3"|length }} drugs account for 60% of demand</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Drugs Detailed Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="drug-table">
+                <div class="p-3 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2 text-warning"></i>
+                        Top Performing Drugs
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Drug Name</th>
+                                <th>Annual Demand</th>
+                                <th>Daily Average</th>
+                                <th>Market Share</th>
+                                <th>Growth Rate</th>
+                                <th>Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for drug in top_drugs %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">{{ drug.rank }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ drug.drug_name }}</strong>
+                                </td>
+                                <td>{{ drug.total_annual_demand|floatformat:0 }}</td>
+                                <td>{{ drug.average_daily_demand|floatformat:0 }}</td>
+                                <td>{{ drug.percentage_of_total }}%</td>
+                                <td>
+                                    {% with summary_stats|lookup:drug.drug_name.monthly_growth_rate as growth %}
+                                        <span class="growth-badge {% if growth > 0 %}growth-positive{% elif growth < 0 %}growth-negative{% else %}growth-neutral{% endif %}">
+                                            {{ growth|floatformat:1 }}%
+                                        </span>
+                                    {% endwith %}
+                                </td>
+                                <td>
+                                    {% with summary_stats|lookup:drug.drug_name.demand_volatility as volatility %}
+                                        <span class="{% if volatility > avg_volatility|floatformat:0|add:50 %}risk-high{% elif volatility > avg_volatility %}risk-medium{% else %}risk-low{% endif %}">
+                                            {% if volatility > avg_volatility|floatformat:0|add:50 %}
+                                                <i class="fas fa-exclamation-circle"></i> High
+                                            {% elif volatility > avg_volatility %}
+                                                <i class="fas fa-exclamation-triangle"></i> Medium
+                                            {% else %}
+                                                <i class="fas fa-check-circle"></i> Low
+                                            {% endif %}
+                                        </span>
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Drug Statistics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="drug-table">
+                <div class="p-3 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-ul me-2 text-primary"></i>
+                        Complete Drug Analysis
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Total Demand</th>
+                                <th>Avg Daily</th>
+                                <th>Min/Max</th>
+                                <th>Volatility</th>
+                                <th>Growth</th>
+                                <th>Recent Trend</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for drug_name, stats in summary_stats.items %}
+                            <tr>
+                                <td>
+                                    <strong>{{ drug_name }}</strong>
+                                    {% if drug_name in high_growth_drugs %}
+                                        <span class="badge bg-success ms-2">Growing</span>
+                                    {% endif %}
+                                    {% if drug_name in high_risk_drugs %}
+                                        <span class="badge bg-warning ms-2">High Risk</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ stats.total_demand_last_year|floatformat:0 }}</td>
+                                <td>{{ stats.average_daily_demand|floatformat:0 }}</td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ stats.min_demand }} - {{ stats.max_demand }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="{% if stats.demand_volatility > avg_volatility|floatformat:0|add:50 %}text-danger{% elif stats.demand_volatility > avg_volatility %}text-warning{% else %}text-success{% endif %}">
+                                        {{ stats.demand_volatility|floatformat:1 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="growth-badge {% if stats.monthly_growth_rate > 0 %}growth-positive{% elif stats.monthly_growth_rate < 0 %}growth-negative{% else %}growth-neutral{% endif %}">
+                                        {{ stats.monthly_growth_rate|floatformat:1 }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if stats.recent_month_avg > stats.previous_month_avg %}
+                                        <i class="fas fa-arrow-up text-success"></i> Increasing
+                                    {% elif stats.recent_month_avg < stats.previous_month_avg %}
+                                        <i class="fas fa-arrow-down text-danger"></i> Decreasing
+                                    {% else %}
+                                        <i class="fas fa-arrows-alt-h text-muted"></i> Stable
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insights Grid -->
+    <div class="insights-grid">
+        <div class="insight-card">
+            <div class="insight-icon icon-success">
+                <i class="fas fa-trending-up"></i>
+            </div>
+            <h6>Growth Opportunities</h6>
+            <p class="text-muted mb-3">
+                {{ high_growth_drugs|length }} drugs are experiencing rapid growth (>5% monthly).
+                Consider increasing inventory for these items.
+            </p>
+            {% if high_growth_drugs %}
+                <div class="small">
+                    <strong>Top growers:</strong>
+                    {% for drug in high_growth_drugs|slice:":3" %}
+                        <span class="badge bg-light text-dark me-1">{{ drug }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-icon icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h6>Risk Management</h6>
+            <p class="text-muted mb-3">
+                {{ high_risk_drugs|length }} drugs have high demand volatility.
+                Monitor stock levels closely to prevent shortages.
+            </p>
+            {% if high_risk_drugs %}
+                <div class="small">
+                    <strong>High risk drugs:</strong>
+                    {% for drug in high_risk_drugs|slice:":3" %}
+                        <span class="badge bg-light text-dark me-1">{{ drug }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-icon icon-info">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h6>Market Concentration</h6>
+            <p class="text-muted mb-3">
+                Top 5 drugs represent a significant portion of total demand.
+                Diversification opportunities may exist in other categories.
+            </p>
+            <div class="small">
+                <strong>Market leader:</strong>
+                <span class="badge bg-primary">{{ top_drugs.0.drug_name }}</span>
+                ({{ top_drugs.0.percentage_of_total }}% share)
+            </div>
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-icon icon-success">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h6>System Health</h6>
+            <p class="text-muted mb-3">
+                Overall demand patterns are stable with good predictability.
+                Average forecast accuracy across all drugs is high.
+            </p>
+            <div class="small">
+                <strong>System status:</strong>
+                <span class="badge bg-success">Healthy</span>
+                <span class="badge bg-light text-dark">{{ total_drugs }} drugs tracked</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Add click handlers for table rows
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            const drugName = this.querySelector('strong').textContent.trim();
+            window.location.href = `{% url 'ai_forecast:forecast' %}?drug=${encodeURIComponent(drugName)}`;
+        });
+        
+        // Add hover effect
+        row.style.cursor = 'pointer';
+    });
+
+    // Auto-refresh data every 10 minutes
+    setInterval(() => {
+        window.location.reload();
+    }, 600000);
+});
+</script>
+{% endblock %}

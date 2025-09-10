@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - DrugTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Welcome Back
+                </h3>
+                <p class="mb-0 mt-2">Sign in to your DrugTrack account</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="bi bi-person me-1"></i>Username
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            <i class="bi bi-lock me-1"></i>Password
+                        </label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.password.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">
+                            Don't have an account? 
+                            <a href="{% url 'users:register' %}" class="text-decoration-none">
+                                <i class="bi bi-person-plus me-1"></i>Register here
+                            </a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Demo Credentials -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-key me-2"></i>Demo Credentials
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <small>
+                            <strong>Pharma User:</strong><br>
+                            Username: <code>pharma_demo</code><br>
+                            Password: <code>demo123</code>
+                        </small>
+                    </div>
+                    <div class="col-6">
+                        <small>
+                            <strong>Hospital User:</strong><br>
+                            Username: <code>hospital_demo</code><br>
+                            Password: <code>demo123</code>
+                        </small>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <div class="row">
+                    <div class="col-6">
+                        <small>
+                            <strong>Regulator:</strong><br>
+                            Username: <code>regulator_demo</code><br>
+                            Password: <code>demo123</code>
+                        </small>
+                    </div>
+                    <div class="col-6">
+                        <small>
+                            <strong>Patient:</strong><br>
+                            Username: <code>patient_demo</code><br>
+                            Password: <code>demo123</code>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>⚖ Regulator Dashboard</h2>
+    <p class="lead">Expired batches in circulation</p>
+
+    <ul class="list-group">
+        {% for batch in expired_batches %}
+            <li class="list-group-item text-danger">
+                {{ batch.name }} (Batch {{ batch.batch_number }}) - Expired on {{ batch.expiry_date }}
+            </li>
+        {% empty %}
+            <li class="list-group-item">No expired batches found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

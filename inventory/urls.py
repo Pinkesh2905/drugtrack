@@ -1,0 +1,23 @@
+from django.urls import path
+from . import views
+
+app_name = 'inventory'
+
+urlpatterns = [
+    # Main inventory views
+    path('add/', views.add_batch, name='add_batch'),
+    path('list/', views.list_batches, name='list_batches'),
+    path('verify/', views.verify_drug, name='verify_drug_form'),
+    path('verify/<str:batch_number>/', views.verify_drug, name='verify_drug'),
+    
+    # Batch detail and management
+    path('batch/<uuid:batch_id>/', views.batch_detail, name='batch_detail'),
+    path('batch/<uuid:batch_id>/delete/', views.delete_batch, name='delete_batch'),
+    
+    # API endpoints
+    path('api/verify-qr/', views.api_verify_qr, name='api_verify_qr'),
+    path('api/stats/', views.inventory_stats, name='inventory_stats'),
+    
+    # Default redirect to list view
+    path('', views.list_batches, name='index'),
+]

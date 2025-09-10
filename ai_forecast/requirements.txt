@@ -1,0 +1,17 @@
+# AI Forecast App Dependencies
+# Add these to your main project requirements.txt
+
+# Data Science & Machine Learning
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.1.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Django Extensions (if not already included)
+djangorestframework>=3.14.0
+
+# Optional: For more advanced forecasting
+# prophet>=1.1.0  # Uncomment if you want to use Facebook Prophet
+# statsmodels>=0.13.0  # For more advanced statistical models
+# plotly>=5.0.0  # For interactive charts (alternative to matplotlib)

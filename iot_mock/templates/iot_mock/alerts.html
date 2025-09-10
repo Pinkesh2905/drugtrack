@@ -1,0 +1,625 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Alerts & Notifications - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alerts-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .alert-category {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+    
+    .alert-item {
+        display: flex;
+        align-items: start;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .alert-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .alert-critical {
+        border-left: 4px solid #f56565;
+        background: linear-gradient(90deg, #fed7d7 0%, white 20%);
+    }
+    
+    .alert-warning {
+        border-left: 4px solid #ed8936;
+        background: linear-gradient(90deg, #faf089 0%, white 20%);
+    }
+    
+    .alert-info {
+        border-left: 4px solid #4299e1;
+        background: linear-gradient(90deg, #bee3f8 0%, white 20%);
+    }
+    
+    .alert-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .icon-critical {
+        background: #fed7d7;
+        color: #c53030;
+    }
+    
+    .icon-warning {
+        background: #faf089;
+        color: #c05621;
+    }
+    
+    .icon-info {
+        background: #bee3f8;
+        color: #2b6cb0;
+    }
+    
+    .alert-content {
+        flex-grow: 1;
+    }
+    
+    .alert-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+    
+    .category-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .category-count {
+        background: #4299e1;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .alert-timestamp {
+        color: #718096;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .recommended-action {
+        background: #f7fafc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 3px solid #4299e1;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+    }
+    
+    .alert-filter {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+    
+    .severity-critical { color: #c53030; }
+    .severity-warning { color: #c05621; }
+    .severity-info { color: #2b6cb0; }
+    
+    .alert-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .pulse-animation {
+        animation: alertPulse 2s infinite;
+    }
+    
+    @keyframes alertPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="alerts-header">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="h2 mb-3">
+                    <i class="fas fa-bell me-3"></i>
+                    Alerts & Notifications
+                </h1>
+                <p class="mb-0 opacity-90">
+                    Monitor and manage all system alerts and temperature notifications
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <button class="btn btn-light me-2" onclick="refreshAlerts()">
+                    <i class="fas fa-sync me-2"></i>Refresh
+                </button>
+                <a href="{% url 'iot_mock:system_dashboard' %}" class="btn btn-light">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Statistics -->
+    <div class="alert-stats">
+        <div class="stat-card">
+            <div class="stat-value severity-critical">{{ critical_alerts|length }}</div>
+            <div class="text-muted">Critical Alerts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value severity-warning">{{ warning_alerts|length }}</div>
+            <div class="text-muted">Warning Alerts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value severity-info">{{ info_alerts|length }}</div>
+            <div class="text-muted">Info Alerts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value text-primary">{{ all_alerts|length }}</div>
+            <div class="text-muted">Total Active</div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="alert-filter">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h6 class="mb-2">Filter Alerts</h6>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary active" data-filter="all">
+                        All ({{ all_alerts|length }})
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" data-filter="critical">
+                        Critical ({{ critical_alerts|length }})
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" data-filter="warning">
+                        Warning ({{ warning_alerts|length }})
+                    </button>
+                    <button type="button" class="btn btn-outline-info" data-filter="info">
+                        Info ({{ info_alerts|length }})
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <div class="mt-3 mt-lg-0">
+                    <select class="form-select form-select-sm d-inline-block w-auto" id="sortBy">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="severity">By Severity</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Critical Alerts -->
+    {% if critical_alerts %}
+    <div class="alert-category" data-category="critical">
+        <div class="category-header">
+            <h5 class="mb-0 text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Critical Alerts
+                <span class="category-count bg-danger">{{ critical_alerts|length }}</span>
+            </h5>
+        </div>
+        
+        {% for alert in critical_alerts %}
+        <div class="alert-item alert-critical {% if alert.severity == 'danger' %}pulse-animation{% endif %}">
+            <div class="alert-icon icon-critical">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="alert-content">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-1">{{ alert.type }}</h6>
+                    <small class="text-muted">{{ alert.timestamp|date:"M d, H:i" }}</small>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Location:</strong> {{ alert.location }}
+                </div>
+                
+                <div class="mb-2">
+                    {{ alert.message }}
+                </div>
+                
+                <div class="recommended-action">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>
+                        <strong>Recommended Action:</strong>
+                    </div>
+                    <p class="mb-0 small">{{ alert.recommended_action }}</p>
+                </div>
+            </div>
+            <div class="alert-actions">
+                <button class="btn btn-sm btn-outline-success" onclick="acknowledgeAlert('{{ alert.id }}')">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('{{ alert.id }}')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Warning Alerts -->
+    {% if warning_alerts %}
+    <div class="alert-category" data-category="warning">
+        <div class="category-header">
+            <h5 class="mb-0 text-warning">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Warning Alerts
+                <span class="category-count bg-warning text-dark">{{ warning_alerts|length }}</span>
+            </h5>
+        </div>
+        
+        {% for alert in warning_alerts %}
+        <div class="alert-item alert-warning">
+            <div class="alert-icon icon-warning">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="alert-content">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-1">{{ alert.type }}</h6>
+                    <small class="text-muted">{{ alert.timestamp|date:"M d, H:i" }}</small>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Location:</strong> {{ alert.location }}
+                </div>
+                
+                <div class="mb-2">
+                    {{ alert.message }}
+                </div>
+                
+                <div class="recommended-action">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>
+                        <strong>Recommended Action:</strong>
+                    </div>
+                    <p class="mb-0 small">{{ alert.recommended_action }}</p>
+                </div>
+            </div>
+            <div class="alert-actions">
+                <button class="btn btn-sm btn-outline-success" onclick="acknowledgeAlert('{{ alert.id }}')">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('{{ alert.id }}')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Info Alerts -->
+    {% if info_alerts %}
+    <div class="alert-category" data-category="info">
+        <div class="category-header">
+            <h5 class="mb-0 text-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Information Alerts
+                <span class="category-count bg-info">{{ info_alerts|length }}</span>
+            </h5>
+        </div>
+        
+        {% for alert in info_alerts %}
+        <div class="alert-item alert-info">
+            <div class="alert-icon icon-info">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="alert-content">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-1">{{ alert.type }}</h6>
+                    <small class="text-muted">{{ alert.timestamp|date:"M d, H:i" }}</small>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Location:</strong> {{ alert.location }}
+                </div>
+                
+                <div class="mb-2">
+                    {{ alert.message }}
+                </div>
+                
+                <div class="recommended-action">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>
+                        <strong>Recommended Action:</strong>
+                    </div>
+                    <p class="mb-0 small">{{ alert.recommended_action }}</p>
+                </div>
+            </div>
+            <div class="alert-actions">
+                <button class="btn btn-sm btn-outline-success" onclick="acknowledgeAlert('{{ alert.id }}')">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('{{ alert.id }}')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not all_alerts %}
+    <div class="alert-category">
+        <div class="empty-state">
+            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+            <h4>All Clear!</h4>
+            <p class="text-muted">No active alerts at this time. All systems are operating normally.</p>
+            <button class="btn btn-primary" onclick="refreshAlerts()">
+                <i class="fas fa-sync me-2"></i>Check for New Alerts
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Alert Details Modal -->
+<div class="modal fade" id="alertDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alert Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="alertDetailsContent">
+                <!-- Alert details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="acknowledgeCurrentAlert()">
+                    <i class="fas fa-check me-2"></i>Acknowledge
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    document.querySelectorAll('[data-filter]').forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            document.querySelectorAll('[data-filter]').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter alerts
+            document.querySelectorAll('.alert-category').forEach(category => {
+                if (filter === 'all') {
+                    category.style.display = 'block';
+                } else {
+                    const categoryType = category.dataset.category;
+                    category.style.display = categoryType === filter ? 'block' : 'none';
+                }
+            });
+        });
+    });
+    
+    // Sort functionality
+    document.getElementById('sortBy').addEventListener('change', function() {
+        const sortBy = this.value;
+        sortAlerts(sortBy);
+    });
+    
+    // Auto-refresh alerts every 60 seconds
+    setInterval(refreshAlerts, 60000);
+});
+
+function refreshAlerts() {
+    // Show loading state
+    const refreshBtn = document.querySelector('button[onclick="refreshAlerts()"]');
+    const originalText = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+    refreshBtn.disabled = true;
+    
+    // Simulate refresh (in real app, this would be an AJAX call)
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+function acknowledgeAlert(alertId) {
+    // Show confirmation
+    if (confirm('Are you sure you want to acknowledge this alert?')) {
+        // In a real application, this would make an AJAX call to acknowledge the alert
+        const alertElement = document.querySelector(`[onclick*="${alertId}"]`).closest('.alert-item');
+        
+        // Visual feedback
+        alertElement.style.opacity = '0.5';
+        alertElement.style.transform = 'scale(0.98)';
+        
+        // Add acknowledged badge
+        const content = alertElement.querySelector('.alert-content');
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-success ms-2';
+        badge.textContent = 'Acknowledged';
+        content.querySelector('h6').appendChild(badge);
+        
+        // Disable action buttons
+        alertElement.querySelectorAll('button').forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+        });
+        
+        showToast('Alert acknowledged successfully', 'success');
+    }
+}
+
+function viewDetails(alertId) {
+    // In a real application, this would fetch detailed alert information
+    const alertDetailsContent = document.getElementById('alertDetailsContent');
+    
+    // Mock alert details
+    alertDetailsContent.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Alert Information</h6>
+                <table class="table table-sm">
+                    <tr><td><strong>Alert ID:</strong></td><td>${alertId}</td></tr>
+                    <tr><td><strong>Severity:</strong></td><td><span class="badge bg-danger">Critical</span></td></tr>
+                    <tr><td><strong>Location:</strong></td><td>Main Vaccine Refrigerator</td></tr>
+                    <tr><td><strong>First Detected:</strong></td><td>${new Date().toLocaleString()}</td></tr>
+                    <tr><td><strong>Duration:</strong></td><td>5 minutes</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6>System Information</h6>
+                <table class="table table-sm">
+                    <tr><td><strong>Sensor ID:</strong></td><td>TEMP-001</td></tr>
+                    <tr><td><strong>Battery Level:</strong></td><td>85%</td></tr>
+                    <tr><td><strong>Last Calibration:</strong></td><td>2 days ago</td></tr>
+                    <tr><td><strong>Connection Status:</strong></td><td><span class="badge bg-success">Connected</span></td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h6>Recommended Actions</h6>
+            <ul class="list-unstyled">
+                <li><i class="fas fa-check text-success me-2"></i>Check refrigerator door seal</li>
+                <li><i class="fas fa-check text-success me-2"></i>Verify cooling system operation</li>
+                <li><i class="fas fa-check text-success me-2"></i>Move vaccines to backup storage if needed</li>
+                <li><i class="fas fa-check text-success me-2"></i>Contact maintenance team</li>
+            </ul>
+        </div>
+    `;
+    
+    // Store current alert ID for acknowledge function
+    window.currentAlertId = alertId;
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('alertDetailsModal')).show();
+}
+
+function acknowledgeCurrentAlert() {
+    if (window.currentAlertId) {
+        acknowledgeAlert(window.currentAlertId);
+        bootstrap.Modal.getInstance(document.getElementById('alertDetailsModal')).hide();
+    }
+}
+
+function sortAlerts(sortBy) {
+    // This is a simplified version - in a real app, you'd sort server-side
+    const categories = document.querySelectorAll('.alert-category');
+    
+    categories.forEach(category => {
+        const alerts = Array.from(category.querySelectorAll('.alert-item'));
+        const container = category;
+        
+        alerts.sort((a, b) => {
+            const timeA = a.querySelector('small').textContent;
+            const timeB = b.querySelector('small').textContent;
+            
+            if (sortBy === 'newest') {
+                return timeB.localeCompare(timeA);
+            } else if (sortBy === 'oldest') {
+                return timeA.localeCompare(timeB);
+            }
+            // For severity, we rely on the existing order
+            return 0;
+        });
+        
+        // Remove all alerts and re-add them in sorted order
+        alerts.forEach(alert => alert.remove());
+        const header = container.querySelector('.category-header');
+        alerts.forEach(alert => container.insertBefore(alert, null));
+    });
+}
+
+function showToast(message, type = 'info') {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'r' && e.ctrlKey) {
+        e.preventDefault();
+        refreshAlerts();
+    }
+});
+</script>
+{% endblock %}

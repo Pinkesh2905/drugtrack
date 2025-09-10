@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block title %}DrugTrack - Pharmaceutical Supply Chain Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12 text-center">
+        <div class="hero-section p-5">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-pills me-3" style="color: #2c5aa0;"></i>
+                Welcome to DrugTrack
+            </h1>
+            <p class="lead mb-4">
+                Revolutionary pharmaceutical supply chain management with QR verification, 
+                IoT monitoring, and AI-driven demand forecasting.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/inventory/add/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>Add New Batch
+                </a>
+                <a href="/inventory/verify/" class="btn btn-success btn-lg">
+                    <i class="fas fa-shield-alt me-2"></i>Verify Drug
+                </a>
+                <a href="/dashboard/" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-tachometer-alt me-2"></i>View Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h5 class="card-title">Total Batches</h5>
+                <h3 class="text-primary fw-bold" id="total-batches">{{ total_batches|default:"0" }}</h3>
+                <p class="card-text text-muted">Active drug batches in system</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h5 class="card-title">Verified Today</h5>
+                <h3 class="text-success fw-bold" id="verified-today">{{ verified_today|default:"0" }}</h3>
+                <p class="card-text text-muted">QR verifications completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h5 class="card-title">Expiring Soon</h5>
+                <h3 class="text-warning fw-bold" id="expiring-soon">{{ expiring_soon|default:"0" }}</h3>
+                <p class="card-text text-muted">Batches expiring in 30 days</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <h5 class="card-title">Cold Chain</h5>
+                <h3 class="text-info fw-bold" id="cold-chain-ok">{{ cold_chain_ok|default:"98" }}%</h3>
+                <p class="card-text text-muted">Temperature compliance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Features -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-star me-2"></i>Key Features
+        </h2>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h5 class="card-title">QR Code Verification</h5>
+                <p class="card-text">
+                    Each drug batch gets a unique QR code containing batch number, 
+                    name, and expiry date for instant authenticity verification.
+                </p>
+                <a href="/inventory/verify/" class="btn btn-outline-primary">
+                    <i class="fas fa-search me-1"></i>Try Verification
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h5 class="card-title">AI Demand Forecasting</h5>
+                <p class="card-text">
+                    Machine learning algorithms analyze historical data to predict 
+                    future demand and optimize inventory levels.
+                </p>
+                <a href="/ai_forecast/" class="btn btn-outline-primary">
+                    <i class="fas fa-chart-line me-1"></i>View Forecasts
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <h5 class="card-title">IoT Cold Chain Monitoring</h5>
+                <p class="card-text">
+                    Real-time temperature monitoring for vaccines and 
+                    temperature-sensitive medications throughout the supply chain.
+                </p>
+                <a href="/iot_mock/" class="btn btn-outline-primary">
+                    <i class="fas fa-eye me-1"></i>Monitor Now
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h5 class="card-title">Role-Based Access</h5>
+                <p class="card-text">
+                    Different dashboards and permissions for Pharmaceutical companies, 
+                    Hospitals, Regulators, and Patients.
+                </p>
+                <a href="/users/register/" class="btn btn-outline-primary">
+                    <i class="fas fa-user-plus me-1"></i>Register
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h5 class="card-title">Automated Alerts</h5>
+                <p class="card-text">
+                    Get notified about expiring drugs, temperature breaches, 
+                    low stock levels, and counterfeit detection attempts.
+                </p>
+                <a href="/dashboard/" class="btn btn-outline-primary">
+                    <i class="fas fa-bell me-1"></i>View Alerts
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h5 class="card-title">Analytics & Reports</h5>
+                <p class="card-text">
+                    Comprehensive analytics on drug distribution, verification rates, 
+                    expiry patterns, and supply chain efficiency.
+                </p>
+                <a href="/inventory/analytics/" class="btn btn-outline-primary">
+                    <i class="fas fa-chart-bar me-1"></i>View Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock me-2"></i>Recent Activity
+                </h5>
+                <a href="/inventory/list/" class="btn btn-sm btn-outline-primary">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% if recent_batches %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Batch Number</th>
+                                    <th>Drug Name</th>
+                                    <th>Manufacturer</th>
+                                    <th>Quantity</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for batch in recent_batches %}
+                                <tr>
+                                    <td><code>{{ batch.batch_number }}</code></td>
+                                    <td>{{ batch.name }}</td>
+                                    <td>{{ batch.manufacturer }}</td>
+                                    <td>{{ batch.quantity }} units</td>
+                                    <td>{{ batch.expiry_date }}</td>
+                                    <td>
+                                        {% if batch.is_expired %}
+                                            <span class="badge bg-danger">Expired</span>
+                                        {% elif batch.is_expiring_soon %}
+                                            <span class="badge bg-warning">Expiring Soon</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No batches found</h5>
+                        <p class="text-muted">Start by adding your first drug batch to the system.</p>
+                        <a href="/inventory/add/" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add First Batch
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="mb-2">
+                            <i class="fas fa-rocket me-2"></i>Quick Actions
+                        </h4>
+                        <p class="mb-0">
+                            Get started with DrugTrack's powerful features. Add drug batches, verify authenticity, 
+                            or explore our AI-powered analytics.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                            <a href="/inventory/add/" class="btn btn-light">
+                                <i class="fas fa-plus me-1"></i>Add Batch
+                            </a>
+                            <a href="/inventory/verify/" class="btn btn-success">
+                                <i class="fas fa-shield-alt me-1"></i>Verify
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate numbers on page load
+    function animateNumber(element, start, end, duration) {
+        let current = start;
+        let increment = (end - start) / (duration / 16);
+        let timer = setInterval(function() {
+            current += increment;
+            if (current >= end) {
+                clearInterval(timer);
+                current = end;
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    // Animate stats
+    const totalBatches = document.getElementById('total-batches');
+    const verifiedToday = document.getElementById('verified-today');
+    const expiringSoon = document.getElementById('expiring-soon');
+    const coldChainOk = document.getElementById('cold-chain-ok');
+
+    if (totalBatches) {
+        const target = parseInt(totalBatches.textContent) || 0;
+        animateNumber(totalBatches, 0, target, 1000);
+    }
+
+    if (verifiedToday) {
+        const target = parseInt(verifiedToday.textContent) || 0;
+        animateNumber(verifiedToday, 0, target, 1200);
+    }
+
+    if (expiringSoon) {
+        const target = parseInt(expiringSoon.textContent) || 0;
+        animateNumber(expiringSoon, 0, target, 800);
+    }
+
+    // Add hover effects to feature cards
+    const featureCards = document.querySelectorAll('.card');
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Fetch real-time stats (placeholder for future implementation)
+    function updateStats() {
+        // This would normally fetch from your API
+        console.log('Updating stats...');
+        // Example: fetch('/api/stats/').then(response => response.json()).then(data => {...});
+    }
+
+    // Update stats every 30 seconds
+    setInterval(updateStats, 30000);
+});
+</script>
+{% endblock %}

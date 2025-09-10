@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>👤 Patient Dashboard</h2>
+    <p class="lead">Welcome! Here you can verify medicines before purchase.</p>
+
+    {% comment %} <a href="{% url 'inventory:verify_drug' %}" class="btn btn-primary">Verify a Drug</a> {% endcomment %}
+    {% comment %} <a href="{% url 'inventory:verify_drug' batch_number=drug.batch_number %}" class="btn btn-primary">Verify</a> {% endcomment %}
+
+    <a href="{% url 'inventory:verify_drug_form' %}" class="btn btn-primary">Verify a Drug</a>
+
+</div>
+{% endblock %}

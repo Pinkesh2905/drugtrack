@@ -1,0 +1,12 @@
+<span class="trend-indicator">
+    {% if trend == 'increasing' %}
+        <i class="fas fa-arrow-up text-success"></i>
+        <span class="text-success">{{ value|default:"Growing" }}</span>
+    {% elif trend == 'decreasing' %}
+        <i class="fas fa-arrow-down text-danger"></i>
+        <span class="text-danger">{{ value|default:"Declining" }}</span>
+    {% else %}
+        <i class="fas fa-minus text-muted"></i>
+        <span class="text-muted">{{ value|default:"Stable" }}</span>
+    {% endif %}
+</span>

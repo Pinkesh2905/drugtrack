@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - DrugTrack{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- User Info Card -->
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                <h5 class="mt-2 mb-0">{{ user.get_full_name|default:user.username }}</h5>
+                <span class="badge bg-light text-dark mt-2">
+                    {{ user.get_role_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-muted mb-1">
+                        <i class="bi bi-envelope me-1"></i>Email
+                    </h6>
+                    <p class="mb-0">{{ user.email|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted mb-1">
+                        <i class="bi bi-telephone me-1"></i>Phone
+                    </h6>
+                    <p class="mb-0">{{ user.phone_number|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted mb-1">
+                        <i class="bi bi-building me-1"></i>Organization
+                    </h6>
+                    <p class="mb-0">{{ user.organization|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted mb-1">
+                        <i class="bi bi-calendar-check me-1"></i>Member Since
+                    </h6>
+                    <p class="mb-0">{{ user.date_joined|date:"F j, Y" }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted mb-1">
+                        <i class="bi bi-clock me-1"></i>Last Login
+                    </h6>
+                    <p class="mb-0">
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"M j, Y g:i A" }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ user.get_dashboard_url }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-speedometer2 me-1"></i>Go to Dashboard
+                    </a>
+                    {% if user.role == 'pharma' or user.role == 'hospital' %}
+                        <a href="{% url 'inventory:list' %}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-box-seam me-1"></i>View Inventory
+                        </a>
+                    {% endif %}
+                    {% if user.role == 'regulator' %}
+                        <a href="{% url 'dashboard:overview' %}" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-shield-check me-1"></i>Compliance Dashboard
+                        </a>
+                    {% endif %}
+                    <form action="{% url 'users:logout' %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Profile Update Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-gear me-2"></i>Update Profile Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person me-1"></i>First Name
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.first_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person me-1"></i>Last Name
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.last_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="bi bi-envelope me-1"></i>Email Address
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.phone_number.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.organization.id_for_label }}" class="form-label">
+                            <i class="bi bi-building me-1"></i>Organization
+                        </label>
+                        {{ form.organization }}
+                        {% if form.organization.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.organization.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-muted">
+                            <i class="bi bi-briefcase me-1"></i>Current Role
+                        </h6>
+                        <span class="badge bg-primary p-2">
+                            {{ user.get_role_display }}
+                        </span>
+                        <small class="form-text text-muted d-block mt-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Contact support to change your role assignment.
+                        </small>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Update Profile
+                        </button>
+                        <a href="{{ user.get_dashboard_url }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Account Security Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-shield-lock me-2"></i>Account Security
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Password</h6>
+                        <p class="text-muted small mb-2">Last changed: Not available</p>
+                        <button class="btn btn-outline-warning btn-sm" disabled>
+                            <i class="bi bi-key me-1"></i>Change Password
+                        </button>
+                        <small class="d-block text-muted mt-1">
+                            Feature coming soon
+                        </small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Account Status</h6>
+                        <span class="badge bg-success mb-2">
+                            <i class="bi bi-check-circle me-1"></i>Active
+                        </span>
+                        <p class="text-muted small mb-0">
+                            Your account is in good standing
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

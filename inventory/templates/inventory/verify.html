@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Verify Drug{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ page_title }}</h2>
+
+    <!-- Verification Form -->
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ verification_form.batch_number.label_tag }}
+                {{ verification_form.batch_number }}
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Verify</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Verification Result -->
+    {% if verification_result %}
+        {% if verification_result.is_valid %}
+            <div class="alert alert-success">
+                ✅ {{ verification_result.message }}
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ batch.name }}</h5>
+                    <p><strong>Manufacturer:</strong> {{ batch.manufacturer }}</p>
+                    <p><strong>Batch #:</strong> {{ batch.batch_number }}</p>
+                    <p><strong>Expiry:</strong> {{ batch.expiry_date }}</p>
+                    <p><strong>Quantity:</strong> {{ batch.quantity }}</p>
+                    {% if batch.qr_code %}
+                        <img src="{{ batch.qr_code.url }}" width="120">
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-danger">
+                ❌ {{ verification_result.message }}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

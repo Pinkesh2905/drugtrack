@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Drug Batch - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .form-header h2 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .form-header p {
+        color: #6c757d;
+        font-size: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        outline: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        margin-left: 10px;
+    }
+    
+    .alert {
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: none;
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+    }
+    
+    .info-icon {
+        color: #17a2b8;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    
+    .help-text {
+        font-size: 14px;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .form-container {
+            margin: 0 15px;
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="form-container">
+        <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Add New Drug Batch</h2>
+            <p>Enter the details below to add a new drug batch to the inventory. QR code will be generated automatically.</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %}"></i>
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">
+                        <i class="fas fa-pills"></i> Drug Name
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Enter the generic or brand name of the drug</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.manufacturer.id_for_label }}">
+                        <i class="fas fa-industry"></i> Manufacturer
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.manufacturer }}
+                    {% if form.manufacturer.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.manufacturer.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Name of the pharmaceutical company</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.batch_number.id_for_label }}">
+                        <i class="fas fa-barcode"></i> Batch Number
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.batch_number }}
+                    {% if form.batch_number.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.batch_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Unique identifier for this batch</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.quantity.id_for_label }}">
+                        <i class="fas fa-boxes"></i> Quantity
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.quantity.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Number of units in this batch</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.manufacture_date.id_for_label }}">
+                        <i class="fas fa-calendar-alt"></i> Manufacture Date
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.manufacture_date }}
+                    {% if form.manufacture_date.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.manufacture_date.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Date when the drug was manufactured</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.expiry_date.id_for_label }}">
+                        <i class="fas fa-calendar-times"></i> Expiry Date
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.expiry_date }}
+                    {% if form.expiry_date.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.expiry_date.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Date after which the drug should not be used</div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Note:</strong> A QR code will be automatically generated for this batch after submission. 
+                The QR code will contain the batch number, drug name, and expiry date for easy verification.
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Drug Batch
+                </button>
+                <a href="{% url 'inventory:list_batches' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-uppercase batch number
+    const batchNumberField = document.getElementById('{{ form.batch_number.id_for_label }}');
+    if (batchNumberField) {
+        batchNumberField.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+    
+    // Date validation
+    const manufactureDate = document.getElementById('{{ form.manufacture_date.id_for_label }}');
+    const expiryDate = document.getElementById('{{ form.expiry_date.id_for_label }}');
+    
+    function validateDates() {
+        if (manufactureDate.value && expiryDate.value) {
+            const mfgDate = new Date(manufactureDate.value);
+            const expDate = new Date(expiryDate.value);
+            
+            if (expDate <= mfgDate) {
+                expiryDate.setCustomValidity('Expiry date must be after manufacture date');
+            } else {
+                expiryDate.setCustomValidity('');
+            }
+        }
+    }
+    
+    if (manufactureDate && expiryDate) {
+        manufactureDate.addEventListener('change', validateDates);
+        expiryDate.addEventListener('change', validateDates);
+    }
+});
+</script>
+{% endblock %}

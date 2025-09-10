@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Demand Forecasting - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<!-- keep the CSS you already had -->
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="forecast-card">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="h2 mb-3">
+                    <i class="fas fa-chart-line me-3"></i>
+                    AI Demand Forecasting
+                </h1>
+                <p class="mb-0 opacity-90">
+                    Predict drug demand using advanced machine learning algorithms.
+                    Get insights for the next 90 days to optimize inventory management.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="d-flex gap-2 justify-content-lg-end justify-content-start mt-3 mt-lg-0">
+                    <a href="{% url 'ai_forecast:analytics' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-analytics"></i> Analytics
+                    </a>
+                    <a href="{% url 'ai_forecast:comparison' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-balance-scale"></i> Compare
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drug Selector -->
+    <div class="drug-selector">
+        <form method="get" action="">
+            <label for="drug" class="form-label">Select Drug</label>
+            <div class="d-flex gap-2">
+                <select id="drug" name="drug" class="form-select">
+                    {% for drug in available_drugs %}
+                        <option value="{{ drug }}" {% if drug == selected_drug %}selected{% endif %}>
+                            {{ drug }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-forecast">Update Forecast</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Forecast Chart -->
+    <div class="chart-container">
+        <h4>Forecast for {{ selected_drug|default:default_drug }}</h4>
+        {% if chart_data %}
+            <img src="data:image/png;base64,{{ chart_data }}" class="img-fluid" alt="Forecast Chart">
+        {% else %}
+            <p>No chart data available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row g-3 mb-4">
+        {% for drug, stats in summary_stats.items %}
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="metric-value">{{ stats.total_demand_last_year }}</div>
+                <div class="metric-label">{{ drug }}</div>
+                <small class="{% if stats.monthly_growth_rate > 0 %}growth-positive{% else %}growth-negative{% endif %}">
+                    Growth: {{ stats.monthly_growth_rate }}%
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Top Drugs -->
+    <div class="top-drugs-list">
+        <h5>Top Drugs by Demand</h5>
+        {% for drug in top_drugs %}
+            <div class="drug-item">
+                <span>{{ drug.drug_name }}</span>
+                <span class="badge bg-primary">{{ drug.total_demand }}</span>
+            </div>
+        {% empty %}
+            <p>No data available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

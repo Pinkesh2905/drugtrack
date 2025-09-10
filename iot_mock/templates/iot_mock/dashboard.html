@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}IoT System Dashboard - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .system-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .system-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .status-excellent { border-left: 4px solid #48bb78; }
+    .status-good { border-left: 4px solid #4299e1; }
+    .status-warning { border-left: 4px solid #ed8936; }
+    .status-critical { border-left: 4px solid #f56565; }
+    
+    .location-status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .location-status-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .location-status-card:hover {
+        transform: translateY(-3px);
+        cursor: pointer;
+    }
+    
+    .temp-indicator {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .temp-safe { background: #c6f6d5; color: #22543d; }
+    .temp-warning { background: #faf089; color: #744210; }
+    .temp-unsafe { background: #fed7d7; color: #742a2a; }
+    
+    .mini-chart {
+        height: 50px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .trend-up { color: #f56565; }
+    .trend-down { color: #4299e1; }
+    .trend-stable { color: #718096; }
+    
+    .system-health-ring {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        position: relative;
+    }
+    
+    .health-score {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .alert-summary {
+        background: linear-gradient(135deg, #fed7d7 0%, #fbb6ce 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        color: #742a2a;
+    }
+    
+    .capacity-bar {
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .capacity-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #48bb78, #38a169);
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="h2 mb-3">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    IoT System Dashboard
+                </h1>
+                <p class="mb-0 opacity-90">
+                    Comprehensive overview of all cold chain storage locations and system health
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'iot_mock:temperature' %}" class="btn btn-light me-2">
+                    <i class="fas fa-thermometer-half me-2"></i>Monitoring
+                </a>
+                <a href="{% url 'iot_mock:alerts' %}" class="btn btn-warning">
+                    <i class="fas fa-bell me-2"></i>Alerts ({{ system_summary.active_alerts }})
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="system-card status-{{ system_summary.system_status }}">
+                <div class="text-center">
+                    <div class="system-health-ring">
+                        <svg width="120" height="120">
+                            <circle cx="60" cy="60" r="50" stroke="#e2e8f0" stroke-width="10" fill="none"/>
+                            <circle cx="60" cy="60" r="50" stroke="#48bb78" stroke-width="10" fill="none"
+                                    stroke-dasharray="{{ system_summary.health_score|floatformat:0 }}, 100"
+                                    stroke-dashoffset="25" transform="rotate(-90 60 60)"/>
+                        </svg>
+                        <div class="health-score text-{{ system_summary.system_alert_level }}">
+                            {{ system_summary.health_score|floatformat:0 }}%
+                        </div>
+                    </div>
+                    <h6 class="mt-2 mb-0">System Health</h6>
+                    <small class="text-muted">{{ system_summary.system_status_text }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="system-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ system_summary.safe_count }}</h3>
+                        <small class="text-muted">Safe Locations</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="system-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="bg-warning bg-opacity-10 rounded p-3">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ system_summary.warning_count }}</h3>
+                        <small class="text-muted">Warnings</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="system-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="bg-danger bg-opacity-10 rounded p-3">
+                            <i class="fas fa-times-circle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ system_summary.unsafe_count }}</h3>
+                        <small class="text-muted">Critical Issues</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Statistics -->
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="system-card">
+                <h6 class="mb-3">
+                    <i class="fas fa-thermometer-half me-2 text-info"></i>
+                    Temperature Overview
+                </h6>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h4 class="text-primary">{{ system_summary.average_temperature }}°C</h4>
+                            <small class="text-muted">Average Temp</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h4 class="text-success">2°C - 8°C</h4>
+                            <small class="text-muted">Safe Range</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="system-card">
+                <h6 class="mb-3">
+                    <i class="fas fa-shield-alt me-2 text-success"></i>
+                    System Reliability
+                </h6>
+                <div class="text-center">
+                    <h4 class="text-success">{{ system_summary.average_reliability }}%</h4>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: {{ system_summary.average_reliability }}%;"></div>
+                    </div>
+                    <small class="text-muted">Overall Reliability Score</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="system-card">
+                <h6 class="mb-3">
+                    <i class="fas fa-boxes me-2 text-warning"></i>
+                    Storage Capacity
+                </h6>
+                <div class="text-center">
+                    <h4 class="text-warning">{{ total_capacity }}</h4>
+                    <small class="text-muted">Total Vial Capacity</small>
+                    <div class="mt-2">
+                        <span class="badge bg-primary">{{ system_summary.total_locations }} Locations</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Status Grid -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="mb-3">
+                <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                Storage Locations Status
+            </h5>
+        </div>
+    </div>
+
+    <div class="location-status-grid">
+        {% for location in all_locations %}
+            <div class="location-status-card" onclick="window.location.href='{% url 'iot_mock:temperature' %}?location={{ location.location_id }}'">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div>
+                        <h6 class="mb-1">{{ location.location_name }}</h6>
+                        <small class="text-muted">{{ location.location_details }}</small>
+                    </div>
+                    <div class="temp-indicator temp-{{ location.status }}">
+                        {{ location.temperature }}°C
+                    </div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-boxes text-muted"></i>
+                            <div class="small">{{ location.capacity }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-battery-three-quarters text-muted"></i>
+                            <div class="small">{{ location.battery_level }}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-{{ location.alert_level }}">
+                        {{ location.status_text }}
+                    </span>
+                    {% if location.location_id in location_trends %}
+                        <div class="trend-{{ location_trends|lookup:location.location_id.trend }}">
+                            {% if location_trends|lookup:location.location_id.trend == 'rising' %}
+                                <i class="fas fa-arrow-up"></i> Rising
+                            {% elif location_trends|lookup:location.location_id.trend == 'falling' %}
+                                <i class="fas fa-arrow-down"></i> Falling
+                            {% else %}
+                                <i class="fas fa-minus"></i> Stable
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mini-chart mt-2">
+                    <canvas id="miniChart{{ forloop.counter }}" width="100" height="50"></canvas>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Alerts Summary -->
+    {% if alerts %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert-summary">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>
+                        Recent Alerts
+                    </h6>
+                    <a href="{% url 'iot_mock:alerts' %}" class="btn btn-sm btn-outline-danger">
+                        View All ({{ alerts|length }})
+                    </a>
+                </div>
+                
+                {% for alert in alerts|slice:":3" %}
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="me-3">
+                            {% if alert.severity == 'danger' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif alert.severity == 'warning' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>{{ alert.type }}</strong> - {{ alert.location }}
+                            <br>
+                            <small>{{ alert.message|truncatechars:80 }}</small>
+                        </div>
+                        <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize mini charts for each location
+    const locations = {{ all_locations|safe }};
+    
+    locations.forEach((location, index) => {
+        const canvas = document.getElementById(`miniChart${index + 1}`);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            
+            // Generate dummy trend data
+            const trendData = [];
+            const currentTemp = location.temperature;
+            for (let i = 11; i >= 0; i--) {
+                const variation = (Math.random() - 0.5) * 2;
+                trendData.push(currentTemp + variation);
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 12}, (_, i) => i),
+                    datasets: [{
+                        data: trendData,
+                        borderColor: location.status === 'safe' ? '#48bb78' : 
+                                   location.status === 'warning' ? '#ed8936' : '#f56565',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    elements: {
+                        point: { radius: 0 }
+                    }
+                }
+            });
+        }
+    });
+
+    // Auto-refresh dashboard every 2 minutes
+    setInterval(() => {
+        window.location.reload();
+    }, 120000);
+});
+
+// Template filters for JavaScript
+window.templateFilters = window.templateFilters || {};
+window.templateFilters.lookup = function(dict, key) {
+    return dict && dict[key] ? dict[key] : {};
+};
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Welcome to DrugTrack Dashboard</h1>
+    <p class="lead">System overview for all stakeholders</p>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Total Batches</h5>
+                    <h3>{{ total_batches }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Expired</h5>
+                    <h3 class="text-danger">{{ expired_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Expiring Soon</h5>
+                    <h3 class="text-warning">{{ expiring_soon_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
