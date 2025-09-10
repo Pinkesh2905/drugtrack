@@ -126,7 +126,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/users/login/'   # or whatever your actual login path is
+LOGIN_REDIRECT_URL = '/'     # where to go after login
+
 
 
 # Default primary key field type
