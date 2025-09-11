@@ -2,14 +2,224 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>👤 Patient Dashboard</h2>
-    <p class="lead">Welcome! Here you can verify medicines before purchase.</p>
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-pulse">
+                <i class="bi bi-person-heart text-white text-3xl"></i>
+            </div>
+            <h2 class="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Patient Dashboard
+            </h2>
+            <p class="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+                Verify medicine authenticity, track your medication history, and access safety information
+            </p>
+        </div>
 
-    {% comment %} <a href="{% url 'inventory:verify_drug' %}" class="btn btn-primary">Verify a Drug</a> {% endcomment %}
-    {% comment %} <a href="{% url 'inventory:verify_drug' batch_number=drug.batch_number %}" class="btn btn-primary">Verify</a> {% endcomment %}
+        <!-- Main Action Card -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden mb-12">
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-8">
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="bi bi-shield-check text-white text-4xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mb-4">Verify Your Medicine</h3>
+                    <p class="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+                        Scan the QR code on your medication or enter the batch number to verify authenticity and ensure your safety
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'inventory:verify_drug_form' %}" class="bg-white text-purple-600 hover:bg-gray-50 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center min-w-[200px]">
+                            <i class="bi bi-qr-code-scan text-2xl mr-3"></i>
+                            Verify Medicine
+                        </a>
+                        
+                        <button class="bg-purple-500/20 text-white hover:bg-purple-500/30 border border-white/30 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm flex items-center justify-center min-w-[200px]">
+                            <i class="bi bi-camera text-2xl mr-3"></i>
+                            Scan QR Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- How It Works Section -->
+            <div class="p-8">
+                <h4 class="text-2xl font-bold text-gray-800 text-center mb-8">How Verification Works</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center group">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white text-2xl font-bold">1</span>
+                        </div>
+                        <h5 class="font-semibold text-gray-800 mb-2">Scan or Enter</h5>
+                        <p class="text-gray-600 text-sm">Use your phone to scan the QR code or manually enter the batch number</p>
+                    </div>
+                    
+                    <div class="text-center group">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white text-2xl font-bold">2</span>
+                        </div>
+                        <h5 class="font-semibold text-gray-800 mb-2">Blockchain Check</h5>
+                        <p class="text-gray-600 text-sm">Our system verifies the medicine against the secure blockchain database</p>
+                    </div>
+                    
+                    <div class="text-center group">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white text-2xl font-bold">3</span>
+                        </div>
+                        <h5 class="font-semibold text-gray-800 mb-2">Get Results</h5>
+                        <p class="text-gray-600 text-sm">Receive instant verification results and detailed medicine information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <a href="{% url 'inventory:verify_drug_form' %}" class="btn btn-primary">Verify a Drug</a>
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Safety Information Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-shield-fill-check text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-white mb-2">Safety First</h4>
+                    <p class="text-white/80 text-sm">Get safety alerts and important information about your medications</p>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-center"><i class="bi bi-check-circle text-green-500 mr-2"></i>Real-time safety alerts</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-green-500 mr-2"></i>Drug interaction warnings</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-green-500 mr-2"></i>Expiry date notifications</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-green-500 mr-2"></i>Recall information</li>
+                    </ul>
+                    <button class="w-full mt-4 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-medium transition-colors duration-200">
+                        Learn More
+                    </button>
+                </div>
+            </div>
 
+            <!-- Medication History Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-clock-history text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-white mb-2">Your History</h4>
+                    <p class="text-white/80 text-sm">Track all your verified medications and build your health profile</p>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-center"><i class="bi bi-check-circle text-blue-500 mr-2"></i>Medication timeline</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-blue-500 mr-2"></i>Verification history</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-blue-500 mr-2"></i>Health insights</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-blue-500 mr-2"></i>Export records</li>
+                    </ul>
+                    <button class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-colors duration-200">
+                        View History
+                    </button>
+                </div>
+            </div>
+
+            <!-- Support Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-headset text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-white mb-2">Get Support</h4>
+                    <p class="text-white/80 text-sm">24/7 support for all your medication verification needs</p>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-center"><i class="bi bi-check-circle text-amber-500 mr-2"></i>Live chat support</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-amber-500 mr-2"></i>Video tutorials</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-amber-500 mr-2"></i>FAQ resources</li>
+                        <li class="flex items-center"><i class="bi bi-check-circle text-amber-500 mr-2"></i>Emergency hotline</li>
+                    </ul>
+                    <button class="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg font-medium transition-colors duration-200">
+                        Get Help
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access Menu -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+            <h3 class="text-2xl font-bold text-gray-800 text-center mb-8">Quick Access</h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="group bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 p-6 rounded-xl border border-purple-200 transition-all duration-300 hover:shadow-lg text-center">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-qr-code text-white text-xl"></i>
+                    </div>
+                    <p class="font-medium text-purple-800 text-sm">Quick Scan</p>
+                </button>
+
+                <button class="group bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 p-6 rounded-xl border border-blue-200 transition-all duration-300 hover:shadow-lg text-center">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-list-ul text-white text-xl"></i>
+                    </div>
+                    <p class="font-medium text-blue-800 text-sm">My Medicines</p>
+                </button>
+
+                <button class="group bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 p-6 rounded-xl border border-green-200 transition-all duration-300 hover:shadow-lg text-center">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-bell text-white text-xl"></i>
+                    </div>
+                    <p class="font-medium text-green-800 text-sm">Alerts</p>
+                </button>
+
+                <button class="group bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 p-6 rounded-xl border border-amber-200 transition-all duration-300 hover:shadow-lg text-center">
+                    <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-question-circle text-white text-xl"></i>
+                    </div>
+                    <p class="font-medium text-amber-800 text-sm">Help</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Educational Banner -->
+        <div class="mt-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 text-center">
+            <div class="max-w-3xl mx-auto">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="bi bi-lightbulb text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Stay Informed, Stay Safe</h3>
+                <p class="text-white/90 mb-6">
+                    Always verify your medicines before consumption. If something doesn't look right, trust your instincts and verify with DrugTrack.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <span class="px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium backdrop-blur-sm">✓ 100% Free Verification</span>
+                    <span class="px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium backdrop-blur-sm">✓ Instant Results</span>
+                    <span class="px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium backdrop-blur-sm">✓ Secure & Private</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Add some interactive features
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on scroll
+        const cards = document.querySelectorAll('.group');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+        
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    });
+</script>
 {% endblock %}

@@ -2,18 +2,487 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>⚖ Regulator Dashboard</h2>
-    <p class="lead">Expired batches in circulation</p>
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-pulse">
+                <i class="bi bi-shield-check text-white text-3xl"></i>
+            </div>
+            <h2 class="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                Regulator Dashboard
+            </h2>
+            <p class="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+                Monitor compliance, verify drug authenticity, and ensure regulatory standards across the pharmaceutical supply chain
+            </p>
+        </div>
 
-    <ul class="list-group">
-        {% for batch in expired_batches %}
-            <li class="list-group-item text-danger">
-                {{ batch.name }} (Batch {{ batch.batch_number }}) - Expired on {{ batch.expiry_date }}
-            </li>
-        {% empty %}
-            <li class="list-group-item">No expired batches found.</li>
-        {% endfor %}
-    </ul>
+        <!-- Key Metrics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-6 border-l-4 border-red-500 group hover:shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-600 text-sm font-medium uppercase tracking-wider">Expired Batches</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ expired_batches|length|default:"0" }}</p>
+                        <p class="text-red-600 text-xs mt-1">Requires action</p>
+                    </div>
+                    <div class="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-exclamation-triangle text-red-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-6 border-l-4 border-amber-500 group hover:shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-amber-600 text-sm font-medium uppercase tracking-wider">Under Review</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">47</p>
+                        <p class="text-amber-600 text-xs mt-1">Pending approval</p>
+                    </div>
+                    <div class="w-14 h-14 bg-amber-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-clock text-amber-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-6 border-l-4 border-green-500 group hover:shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-600 text-sm font-medium uppercase tracking-wider">Compliance Rate</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">94.8%</p>
+                        <p class="text-green-600 text-xs mt-1">This quarter</p>
+                    </div>
+                    <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-check-circle text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-6 border-l-4 border-blue-500 group hover:shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-600 text-sm font-medium uppercase tracking-wider">Active Facilities</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">1,247</p>
+                        <p class="text-blue-600 text-xs mt-1">Licensed</p>
+                    </div>
+                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-building text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Expired Batches Section - Takes 2/3 space -->
+            <div class="lg:col-span-2">
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-500 to-pink-600 px-6 py-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-2xl font-bold text-white flex items-center">
+                                    <i class="bi bi-exclamation-triangle mr-3"></i>
+                                    Expired Batches in Circulation
+                                </h4>
+                                <p class="text-white/80 mt-1">Critical compliance violations requiring immediate attention</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
+                                    <i class="bi bi-download mr-2"></i>Export
+                                </button>
+                                <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
+                                    <i class="bi bi-bell mr-2"></i>Alert All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if expired_batches %}
+                            <div class="space-y-4 max-h-96 overflow-y-auto">
+                                {% for batch in expired_batches %}
+                                    <div class="group bg-gradient-to-r from-red-50 to-pink-50 hover:from-red-100 hover:to-pink-100 p-5 rounded-xl border border-red-200 transition-all duration-300 hover:shadow-lg">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                                    <i class="bi bi-exclamation-triangle text-white text-xl"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="font-semibold text-gray-800 text-lg">{{ batch.name }}</h5>
+                                                    <p class="text-red-700 text-sm">Batch {{ batch.batch_number }}</p>
+                                                    <p class="text-gray-600 text-xs">Manufacturer: {{ batch.manufacturer|default:"Unknown" }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-red-800 font-bold">{{ batch.expiry_date }}</p>
+                                                <p class="text-red-600 text-sm">Expired</p>
+                                                <div class="flex items-center justify-end mt-2">
+                                                    <span class="px-2 py-1 bg-red-200 text-red-800 rounded-full text-xs font-medium">
+                                                        Critical
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4 flex items-center justify-between">
+                                            <div class="flex space-x-2">
+                                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                                                    High Priority
+                                                </span>
+                                                <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                                                    {{ batch.days_expired|default:"Recently" }} expired
+                                                </span>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors duration-200 flex items-center">
+                                                    <i class="bi bi-bell mr-2"></i>Issue Alert
+                                                </button>
+                                                <button class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors duration-200 flex items-center">
+                                                    <i class="bi bi-eye mr-2"></i>Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-12">
+                                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i class="bi bi-check-circle text-green-500 text-4xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Excellent Compliance!</h3>
+                                <p class="text-gray-600 mb-4">No expired batches found in circulation.</p>
+                                <div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                    <i class="bi bi-shield-check mr-2"></i>
+                                    All systems operating within compliance
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar with Regulatory Tools -->
+            <div class="space-y-6">
+                <!-- Quick Actions Card -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+                        <h4 class="text-xl font-semibold text-white flex items-center">
+                            <i class="bi bi-tools mr-2"></i>Regulatory Tools
+                        </h4>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <button class="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg flex items-center justify-center group">
+                            <i class="bi bi-exclamation-triangle mr-2 group-hover:animate-bounce"></i>Issue Alert
+                        </button>
+                        
+                        <button class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg flex items-center justify-center group">
+                            <i class="bi bi-search mr-2 group-hover:scale-110 transition-transform duration-300"></i>Audit Trail
+                        </button>
+                        
+                        <button class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg flex items-center justify-center group">
+                            <i class="bi bi-clipboard-check mr-2 group-hover:scale-110 transition-transform duration-300"></i>Compliance Check
+                        </button>
+                        
+                        <button class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg flex items-center justify-center group">
+                            <i class="bi bi-file-earmark-text mr-2 group-hover:scale-110 transition-transform duration-300"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- System Status Card -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-4">
+                        <h4 class="text-xl font-semibold text-white flex items-center">
+                            <i class="bi bi-activity mr-2"></i>System Status
+                        </h4>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
+                                    <span class="font-medium text-green-800 text-sm">Alert System</span>
+                                </div>
+                                <span class="text-green-600 text-sm font-bold">Operational</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-3"></div>
+                                    <span class="font-medium text-blue-800 text-sm">Data Integrity</span>
+                                </div>
+                                <span class="text-blue-600 text-sm font-bold">Verified</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">System Health</span>
+                                <span class="text-sm font-bold text-green-700">99.7%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full" style="width: 99.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Violations Card -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4">
+                        <h4 class="text-xl font-semibold text-white flex items-center">
+                            <i class="bi bi-shield-exclamation mr-2"></i>Recent Violations
+                        </h4>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                <p class="text-red-800 text-sm font-medium flex items-center">
+                                    <i class="bi bi-exclamation-triangle mr-2"></i>Critical Violation
+                                </p>
+                                <p class="text-red-600 text-xs mt-1">Expired batch still in circulation - PharmaCorp Inc.</p>
+                                <p class="text-red-500 text-xs mt-1">5 minutes ago</p>
+                            </div>
+                            
+                            <div class="p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <p class="text-amber-800 text-sm font-medium flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-2"></i>Non-Compliance
+                                </p>
+                                <p class="text-amber-600 text-xs mt-1">Temperature logs missing - ColdChain Logistics</p>
+                                <p class="text-amber-500 text-xs mt-1">2 hours ago</p>
+                            </div>
+                            
+                            <div class="p-3 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg">
+                                <p class="text-orange-800 text-sm font-medium flex items-center">
+                                    <i class="bi bi-clock mr-2"></i>Documentation Delay
+                                </p>
+                                <p class="text-orange-600 text-xs mt-1">Late compliance report - MediDistribute Ltd.</p>
+                                <p class="text-orange-500 text-xs mt-1">1 day ago</p>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center">
+                            <i class="bi bi-list-ul mr-2"></i>View All Violations
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Regulatory Calendar Card -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-4">
+                        <h4 class="text-xl font-semibold text-white flex items-center">
+                            <i class="bi bi-calendar-event mr-2"></i>Upcoming Events
+                        </h4>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <span class="text-white text-xs font-bold">15</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-blue-800 text-sm font-medium">Quarterly Review</p>
+                                    <p class="text-blue-600 text-xs">Compliance audit meeting</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <span class="text-white text-xs font-bold">22</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-green-800 text-sm font-medium">Training Session</p>
+                                    <p class="text-green-600 text-xs">New regulation updates</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <span class="text-white text-xs font-bold">30</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-purple-800 text-sm font-medium">Policy Update</p>
+                                    <p class="text-purple-600 text-xs">Cold chain guidelines v2.1</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-4 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center">
+                            <i class="bi bi-calendar-plus mr-2"></i>View Full Calendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Analytics Section -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Compliance Analytics -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="bi bi-pie-chart mr-2 text-green-500"></i>
+                        Compliance Analytics
+                    </h3>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Monthly</button>
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">Quarterly</button>
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">Yearly</button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                        <p class="text-3xl font-bold text-green-700">94.8%</p>
+                        <p class="text-green-600 text-sm font-medium">Overall Compliance</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                        <p class="text-3xl font-bold text-blue-700">47</p>
+                        <p class="text-blue-600 text-sm font-medium">Facilities Audited</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200">
+                        <p class="text-3xl font-bold text-amber-700">12</p>
+                        <p class="text-amber-600 text-sm font-medium">Minor Violations</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-200">
+                        <p class="text-3xl font-bold text-red-700">3</p>
+                        <p class="text-red-600 text-sm font-medium">Critical Issues</p>
+                    </div>
+                </div>
+                
+                <div class="h-32 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl flex items-center justify-center border border-green-200">
+                    <div class="text-center">
+                        <i class="bi bi-graph-up text-green-400 text-3xl mb-2"></i>
+                        <p class="text-green-600 font-medium text-sm">Compliance Trend Chart</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="bi bi-shield-exclamation mr-2 text-red-500"></i>
+                    Risk Assessment Matrix
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border-l-4 border-red-500">
+                        <div>
+                            <p class="font-semibold text-red-800">High Risk</p>
+                            <p class="text-red-600 text-sm">Expired drugs in circulation</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-2xl font-bold text-red-700">{{ expired_batches|length|default:"0" }}</span>
+                            <p class="text-red-600 text-xs">Issues</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border-l-4 border-amber-500">
+                        <div>
+                            <p class="font-semibold text-amber-800">Medium Risk</p>
+                            <p class="text-amber-600 text-sm">Documentation delays</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-2xl font-bold text-amber-700">8</span>
+                            <p class="text-amber-600 text-xs">Issues</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-500">
+                        <div>
+                            <p class="font-semibold text-blue-800">Low Risk</p>
+                            <p class="text-blue-600 text-sm">Minor compliance issues</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-2xl font-bold text-blue-700">23</span>
+                            <p class="text-blue-600 text-xs">Issues</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Overall Risk Level</span>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium">Moderate</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="bi bi-info-circle mr-2"></i>
+                        Regular monitoring and immediate action required for high-risk issues
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Banner -->
+        <div class="mt-8 bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 rounded-2xl p-8 text-center">
+            <div class="max-w-3xl mx-auto">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="bi bi-megaphone text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Regulatory Notice</h3>
+                <p class="text-white/90 mb-6">
+                    New pharmaceutical compliance standards will be enforced starting next quarter. 
+                    All facilities must complete updated certification by the deadline.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium backdrop-blur-sm transition-all duration-300 flex items-center">
+                        <i class="bi bi-file-text mr-2"></i>View Guidelines
+                    </button>
+                    <button class="px-6 py-3 bg-white text-red-600 hover:bg-gray-100 rounded-lg font-medium transition-all duration-300 flex items-center">
+                        <i class="bi bi-calendar-check mr-2"></i>Schedule Training
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
+
+<script>
+    // Add interactive functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate numbers on load
+        const statNumbers = document.querySelectorAll('.text-3xl.font-bold');
+        statNumbers.forEach(stat => {
+            const text = stat.textContent;
+            const number = parseFloat(text);
+            if (!isNaN(number)) {
+                let current = 0;
+                const increment = number / 30;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= number) {
+                        current = number;
+                        clearInterval(timer);
+                    }
+                    if (text.includes('%')) {
+                        stat.textContent = current.toFixed(1) + '%';
+                    } else {
+                        stat.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 50);
+            }
+        });
+        
+        // Add pulse animation to critical alerts
+        const criticalAlerts = document.querySelectorAll('.border-red-500');
+        criticalAlerts.forEach(alert => {
+            setInterval(() => {
+                alert.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.3)';
+                setTimeout(() => {
+                    alert.style.boxShadow = '';
+                }, 1000);
+            }, 3000);
+        });
+        
+        // Auto-refresh expired batches count every 30 seconds
+        setInterval(() => {
+            // This would typically make an AJAX call to refresh data
+            console.log('Refreshing compliance data...');
+        }, 30000);
+    });
+</script>
+{% endblock %} 
