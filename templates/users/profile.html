@@ -3,227 +3,298 @@
 {% block title %}Profile - DrugTrack{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <!-- User Info Card -->
-        <div class="card">
-            <div class="card-header bg-primary text-white text-center">
-                <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
-                <h5 class="mt-2 mb-0">{{ user.get_full_name|default:user.username }}</h5>
-                <span class="badge bg-light text-dark mt-2">
-                    {{ user.get_role_display }}
-                </span>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <h6 class="text-muted mb-1">
-                        <i class="bi bi-envelope me-1"></i>Email
-                    </h6>
-                    <p class="mb-0">{{ user.email|default:"Not provided" }}</p>
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Profile Header -->
+    <div class="glass-effect rounded-2xl p-6 mb-8">
+        <div class="flex items-center space-x-6">
+            <div class="relative">
+                <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-xl">
+                    <i class="bi bi-person-circle text-white text-4xl"></i>
                 </div>
-                
-                <div class="mb-3">
-                    <h6 class="text-muted mb-1">
-                        <i class="bi bi-telephone me-1"></i>Phone
-                    </h6>
-                    <p class="mb-0">{{ user.phone_number|default:"Not provided" }}</p>
-                </div>
-                
-                <div class="mb-3">
-                    <h6 class="text-muted mb-1">
-                        <i class="bi bi-building me-1"></i>Organization
-                    </h6>
-                    <p class="mb-0">{{ user.organization|default:"Not provided" }}</p>
-                </div>
-                
-                <div class="mb-3">
-                    <h6 class="text-muted mb-1">
-                        <i class="bi bi-calendar-check me-1"></i>Member Since
-                    </h6>
-                    <p class="mb-0">{{ user.date_joined|date:"F j, Y" }}</p>
-                </div>
-                
-                <div class="mb-3">
-                    <h6 class="text-muted mb-1">
-                        <i class="bi bi-clock me-1"></i>Last Login
-                    </h6>
-                    <p class="mb-0">
-                        {% if user.last_login %}
-                            {{ user.last_login|date:"M j, Y g:i A" }}
-                        {% else %}
-                            Never
-                        {% endif %}
-                    </p>
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
+                    <i class="bi bi-check text-white text-sm"></i>
                 </div>
             </div>
-        </div>
-        
-        <!-- Quick Actions Card -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="bi bi-lightning me-2"></i>Quick Actions
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ user.get_dashboard_url }}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-speedometer2 me-1"></i>Go to Dashboard
-                    </a>
-                    {% if user.role == 'pharma' or user.role == 'hospital' %}
-                        <a href="{% url 'inventory:list' %}" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-box-seam me-1"></i>View Inventory
-                        </a>
-                    {% endif %}
-                    {% if user.role == 'regulator' %}
-                        <a href="{% url 'dashboard:overview' %}" class="btn btn-outline-warning btn-sm">
-                            <i class="bi bi-shield-check me-1"></i>Compliance Dashboard
-                        </a>
-                    {% endif %}
-                    <form action="{% url 'users:logout' %}" method="post" class="d-grid">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-box-arrow-right me-1"></i>Logout
-                        </button>
-                    </form>
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">{{ user.get_full_name|default:user.username }}</h1>
+                <div class="flex items-center space-x-3">
+                    <span class="role-badge px-3 py-1 rounded-full text-sm font-medium">
+                        {{ user.get_role_display }}
+                    </span>
+                    <span class="text-white/80">•</span>
+                    <span class="text-white/80">Member since {{ user.date_joined|date:"F Y" }}</span>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-8">
-        <!-- Profile Update Form -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="bi bi-person-gear me-2"></i>Update Profile Information
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column - User Info & Quick Actions -->
+        <div class="space-y-6">
+            <!-- User Info Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+                    <h2 class="text-xl font-semibold text-white flex items-center">
+                        <i class="bi bi-person-badge mr-2"></i>Profile Information
+                    </h2>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <!-- Email -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-envelope text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Email Address</p>
+                            <p class="text-gray-900 font-medium">{{ user.email|default:"Not provided" }}</p>
+                        </div>
+                    </div>
                     
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                <i class="bi bi-person me-1"></i>First Name
+                    <!-- Phone -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-telephone text-green-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Phone Number</p>
+                            <p class="text-gray-900 font-medium">{{ user.phone_number|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Organization -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-building text-purple-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Organization</p>
+                            <p class="text-gray-900 font-medium">{{ user.organization|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Last Login -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-clock text-orange-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Last Login</p>
+                            <p class="text-gray-900 font-medium">
+                                {% if user.last_login %}
+                                    {{ user.last_login|date:"M j, Y g:i A" }}
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <i class="bi bi-lightning-charge mr-2"></i>Quick Actions
+                    </h3>
+                </div>
+                
+                <div class="p-6 space-y-3">
+                    <a href="{{ user.get_dashboard_url }}" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Go to Dashboard</span>
+                    </a>
+                    
+                    {% if user.role == 'pharma' or user.role == 'hospital' %}
+                    <a href="{% url 'inventory:list' %}" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                        <i class="bi bi-box-seam"></i>
+                        <span>View Inventory</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if user.role == 'regulator' %}
+                    <a href="{% url 'dashboard:overview' %}" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Compliance Dashboard</span>
+                    </a>
+                    {% endif %}
+                    
+                    <form action="{% url 'users:logout' %}" method="post" class="w-full">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Account Security Card -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <i class="bi bi-shield-lock mr-2"></i>Account Security
+                    </h3>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-key text-yellow-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Password</p>
+                            <p class="text-gray-500 text-sm mb-2">Last changed: Not available</p>
+                            <button class="bg-gray-200 text-gray-400 px-3 py-2 rounded-lg text-sm cursor-not-allowed" disabled>
+                                Change Password
+                            </button>
+                            <p class="text-xs text-gray-400 mt-1">Feature coming soon</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-check-circle text-green-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600">Account Status</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="bi bi-check-circle mr-1"></i>Active
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1">Your account is in good standing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column - Profile Update Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                    <h2 class="text-xl font-semibold text-white flex items-center">
+                        <i class="bi bi-person-gear mr-2"></i>Update Profile Information
+                    </h2>
+                </div>
+                
+                <div class="p-6">
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Name Fields -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="bi bi-person mr-1 text-blue-500"></i>First Name
+                                </label>
+                                {{ form.first_name|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                                {% if form.first_name.errors %}
+                                    <div class="mt-1 text-sm text-red-600 flex items-center">
+                                        <i class="bi bi-exclamation-circle mr-1"></i>
+                                        {{ form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="bi bi-person mr-1 text-blue-500"></i>Last Name
+                                </label>
+                                {{ form.last_name|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                                {% if form.last_name.errors %}
+                                    <div class="mt-1 text-sm text-red-600 flex items-center">
+                                        <i class="bi bi-exclamation-circle mr-1"></i>
+                                        {{ form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div>
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="bi bi-envelope mr-1 text-green-500"></i>Email Address
                             </label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.first_name.errors }}
+                            {{ form.email|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            {% if form.email.errors %}
+                                <div class="mt-1 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ form.email.errors.0 }}
                                 </div>
                             {% endif %}
                         </div>
                         
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                <i class="bi bi-person me-1"></i>Last Name
+                        <!-- Phone -->
+                        <div>
+                            <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="bi bi-telephone mr-1 text-purple-500"></i>Phone Number
                             </label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.last_name.errors }}
+                            {{ form.phone_number|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            {% if form.phone_number.errors %}
+                                <div class="mt-1 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ form.phone_number.errors.0 }}
                                 </div>
                             {% endif %}
                         </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">
-                            <i class="bi bi-envelope me-1"></i>Email Address
-                        </label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ form.email.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">
-                            <i class="bi bi-telephone me-1"></i>Phone Number
-                        </label>
-                        {{ form.phone_number }}
-                        {% if form.phone_number.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ form.phone_number.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.organization.id_for_label }}" class="form-label">
-                            <i class="bi bi-building me-1"></i>Organization
-                        </label>
-                        {{ form.organization }}
-                        {% if form.organization.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ form.organization.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="text-muted">
-                            <i class="bi bi-briefcase me-1"></i>Current Role
-                        </h6>
-                        <span class="badge bg-primary p-2">
-                            {{ user.get_role_display }}
-                        </span>
-                        <small class="form-text text-muted d-block mt-1">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Contact support to change your role assignment.
-                        </small>
-                    </div>
-                    
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
+                        
+                        <!-- Organization -->
+                        <div>
+                            <label for="{{ form.organization.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="bi bi-building mr-1 text-orange-500"></i>Organization
+                            </label>
+                            {{ form.organization|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            {% if form.organization.errors %}
+                                <div class="mt-1 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ form.organization.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle me-2"></i>Update Profile
-                        </button>
-                        <a href="{{ user.get_dashboard_url }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Account Security Card -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="bi bi-shield-lock me-2"></i>Account Security
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Password</h6>
-                        <p class="text-muted small mb-2">Last changed: Not available</p>
-                        <button class="btn btn-outline-warning btn-sm" disabled>
-                            <i class="bi bi-key me-1"></i>Change Password
-                        </button>
-                        <small class="d-block text-muted mt-1">
-                            Feature coming soon
-                        </small>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Account Status</h6>
-                        <span class="badge bg-success mb-2">
-                            <i class="bi bi-check-circle me-1"></i>Active
-                        </span>
-                        <p class="text-muted small mb-0">
-                            Your account is in good standing
-                        </p>
-                    </div>
+                        
+                        <!-- Current Role -->
+                        <div class="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="bi bi-briefcase text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Current Role</p>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        {{ user.get_role_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-start">
+                                <i class="bi bi-info-circle text-blue-500 mr-2 mt-0.5"></i>
+                                <p class="text-sm text-blue-700">
+                                    Contact support to change your role assignment.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {% if form.non_field_errors %}
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="bi bi-exclamation-triangle-fill text-red-500 mr-2"></i>
+                                    <span class="text-red-800">{{ form.non_field_errors.0 }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                            <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                                <i class="bi bi-check-circle"></i>
+                                <span>Update Profile</span>
+                            </button>
+                            <a href="{{ user.get_dashboard_url }}" class="flex-1 bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 flex items-center justify-center space-x-2">
+                                <i class="bi bi-arrow-left"></i>
+                                <span>Back to Dashboard</span>
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
