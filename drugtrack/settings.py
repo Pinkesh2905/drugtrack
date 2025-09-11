@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dashboard',
     'ai_forecast',
     'iot_mock',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
