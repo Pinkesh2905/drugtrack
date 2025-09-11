@@ -87,12 +87,15 @@
                                 <p class="text-white/80 mt-1">Critical compliance violations requiring immediate attention</p>
                             </div>
                             <div class="flex space-x-2">
-                                <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
+                                <a href="{% url 'inventory:export_expired_csv' %}" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
                                     <i class="bi bi-download mr-2"></i>Export
-                                </button>
-                                <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
-                                    <i class="bi bi-bell mr-2"></i>Alert All
-                                </button>
+                                </a>
+                                <form action="{% url 'inventory:alert_all_expired' %}" method="post" onsubmit="return confirm('Are you sure you want to issue an alert for ALL expired batches?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center backdrop-blur-sm">
+                                        <i class="bi bi-bell mr-2"></i>Alert All
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

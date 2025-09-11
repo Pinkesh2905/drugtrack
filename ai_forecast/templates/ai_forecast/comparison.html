@@ -1,404 +1,133 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load forecast_extras %}
 
 {% block title %}Drug Comparison - DrugTrack{% endblock %}
 
-{% block extra_css %}
-<style>
-    .comparison-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .drug-selector-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
-    }
-    
-    .comparison-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    .comparison-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    }
-    
-    .drug-chip {
-        display: inline-block;
-        background: #e0e7ff;
-        color: #3730a3;
-        padding: 0.5rem 1rem;
-        border-radius: 25px;
-        margin: 0.25rem;
-        position: relative;
-        font-weight: 500;
-    }
-    
-    .drug-chip .remove-btn {
-        background: #dc2626;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 0.7rem;
-        margin-left: 0.5rem;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .metric-comparison {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-    
-    .metric-item {
-        text-align: center;
-        padding: 1rem;
-        background: #f8fafc;
-        border-radius: 8px;
-    }
-    
-    .metric-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #1e293b;
-    }
-    
-    .metric-label {
-        font-size: 0.8rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 0.25rem;
-    }
-    
-    .trend-icon {
-        font-size: 1.2rem;
-        margin-left: 0.5rem;
-    }
-    
-    .trend-up {
-        color: #16a34a;
-    }
-    
-    .trend-down {
-        color: #dc2626;
-    }
-    
-    .trend-stable {
-        color: #64748b;
-    }
-    
-    .comparison-table {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-    
-    .winner-badge {
-        background: #dcfce7;
-        color: #166534;
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    
-    .add-drug-section {
-        border: 2px dashed #d1d5db;
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        margin-bottom: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    .add-drug-section:hover {
-        border-color: #6366f1;
-        background: #f8fafc;
-    }
-    
-    .comparison-insights {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .radar-chart-container {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        text-align: center;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container-fluid py-4">
+<div class="space-y-8">
     <!-- Header -->
-    <div class="comparison-header">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="h2 mb-3">
-                    <i class="fas fa-balance-scale me-3"></i>
-                    Drug Comparison Dashboard
+    <div class="glass-effect rounded-2xl p-6 md:p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
+                    <i class="bi bi-ui-checks-grid mr-3"></i>
+                    Drug Comparison
                 </h1>
-                <p class="mb-0 opacity-90">
-                    Compare demand patterns, trends, and forecasts across multiple drugs
+                <p class="text-white/80 max-w-2xl">
+                    Compare demand patterns, trends, and forecasts across multiple drugs side-by-side.
                 </p>
             </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{% url 'ai_forecast:forecast' %}" class="btn btn-light me-2">
-                    <i class="fas fa-chart-line me-2"></i>Forecasting
+            <div class="flex-shrink-0 flex items-center gap-2">
+                <a href="{% url 'ai_forecast:forecast' %}" class="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center space-x-2">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>Forecast</span>
                 </a>
-                <a href="{% url 'ai_forecast:analytics' %}" class="btn btn-light">
-                    <i class="fas fa-analytics me-2"></i>Analytics
+                 <a href="{% url 'ai_forecast:analytics' %}" class="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center space-x-2">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>Analytics</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Drug Selection -->
-    <div class="drug-selector-card">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h5 class="mb-3">Select Drugs to Compare</h5>
-                <select id="drugSelector" class="form-select" multiple>
+    <!-- Drug Selection Card -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+                <label for="drugSelector" class="block text-lg font-semibold text-gray-800 mb-2">Select Drugs to Compare (up to 5)</label>
+                 <!-- NOTE: A standard multi-select is hard to style. This is a functional placeholder. For a truly custom look, a JS library like TomSelect or Select2 would be needed. -->
+                <select id="drugSelector" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" multiple>
                     {% for drug in available_drugs %}
                         <option value="{{ drug }}" {% if drug in selected_drugs %}selected{% endif %}>
                             {{ drug }}
                         </option>
                     {% endfor %}
                 </select>
-                <small class="text-muted">Select up to 5 drugs for comparison</small>
             </div>
-            <div class="col-lg-6">
-                <div class="mt-3 mt-lg-0">
-                    <h6>Currently Selected:</h6>
-                    <div id="selectedDrugs">
-                        {% for drug in selected_drugs %}
-                            <span class="drug-chip" data-drug="{{ drug }}">
-                                {{ drug }}
-                                <button type="button" class="remove-btn" onclick="removeDrug('{{ drug }}')">×</button>
-                            </span>
-                        {% endfor %}
-                        {% if not selected_drugs %}
-                            <span class="text-muted">No drugs selected</span>
-                        {% endif %}
-                    </div>
-                    <button id="compareBtn" class="btn btn-primary mt-3">
-                        <i class="fas fa-sync me-2"></i>Update Comparison
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% if selected_drugs and comparison_data %}
-    <!-- Comparison Insights -->
-    <div class="comparison-insights">
-        <div class="row">
-            <div class="col-lg-8">
-                <h5 class="mb-2">Key Insights</h5>
-                <ul class="mb-0">
-                    <li>Comparing {{ selected_drugs|length }} drugs across demand patterns</li>
-                    <li>
-                        Highest average demand: 
-                        {% for drug, data in comparison_data.items %}
-                            {% if forloop.first %}
-                                <strong>{{ drug }}</strong> ({{ data.forecast_avg|floatformat:0 }} units/day)
-                            {% endif %}
-                        {% endfor %}
-                    </li>
-                    <li>
-                        Growth trends: 
-                        {% for drug, data in comparison_data.items %}
-                            {% if data.trend == 'increasing' %}{{ drug }}↗{% endif %}
-                        {% endfor %}
-                    </li>
-                </ul>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <div class="mt-3 mt-lg-0">
-                    <i class="fas fa-lightbulb fa-2x"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Comparison Cards -->
-    <div class="row">
-        {% for drug in selected_drugs %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="comparison-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0 text-primary">{{ drug }}</h5>
-                        <span class="trend-icon {% if comparison_data|lookup:drug.trend == 'increasing' %}trend-up{% elif comparison_data|lookup:drug.trend == 'decreasing' %}trend-down{% else %}trend-stable{% endif %}">
-                            {% if comparison_data|lookup:drug.trend == 'increasing' %}
-                                <i class="fas fa-arrow-up"></i>
-                            {% elif comparison_data|lookup:drug.trend == 'decreasing' %}
-                                <i class="fas fa-arrow-down"></i>
-                            {% else %}
-                                <i class="fas fa-minus"></i>
-                            {% endif %}
+            <div>
+                 <p class="text-md font-semibold text-gray-800 mb-2">Currently Selected:</p>
+                 <div id="selectedDrugs" class="flex flex-wrap gap-2 min-h-[40px]">
+                     {% for drug in selected_drugs %}
+                        <span class="inline-flex items-center bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full" data-drug="{{ drug }}">
+                            {{ drug }}
+                            <button type="button" class="ml-2 text-indigo-600 hover:text-indigo-800" onclick="removeDrug('{{ drug }}')">&times;</button>
                         </span>
-                    </div>
-                    
-                    <div class="metric-comparison">
-                        <div class="metric-item">
-                            <div class="metric-value">{{ comparison_data|lookup:drug.forecast_avg|floatformat:0 }}</div>
-                            <div class="metric-label">Forecast Avg</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">{{ comparison_data|lookup:drug.historical_avg|floatformat:0 }}</div>
-                            <div class="metric-label">Historical Avg</div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <small class="text-muted">
-                            Trend: {{ comparison_data|lookup:drug.trend|capfirst }}
-                        </small>
-                        <a href="{% url 'ai_forecast:forecast' %}?drug={{ drug|urlencode }}" 
-                           class="btn btn-sm btn-outline-primary">
-                            View Details
-                        </a>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <!-- Comparison Table -->
-    <div class="comparison-table mb-4">
-        <div class="p-3 border-bottom">
-            <h5 class="mb-0">
-                <i class="fas fa-table me-2 text-primary"></i>
-                Side-by-Side Comparison
-            </h5>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th>Metric</th>
-                        {% for drug in selected_drugs %}
-                            <th class="text-center">{{ drug }}</th>
-                        {% endfor %}
-                        <th class="text-center">Winner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>30-Day Forecast Average</strong></td>
-                        {% for drug in selected_drugs %}
-                            <td class="text-center">{{ comparison_data|lookup:drug.forecast_avg|floatformat:0 }}</td>
-                        {% endfor %}
-                        <td class="text-center">
-                            {% with max_forecast=comparison_data.values|max_by:'forecast_avg' %}
-                                {% for drug, data in comparison_data.items %}
-                                    {% if data.forecast_avg == max_forecast.forecast_avg %}
-                                        <span class="winner-badge">{{ drug }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Historical Average</strong></td>
-                        {% for drug in selected_drugs %}
-                            <td class="text-center">{{ comparison_data|lookup:drug.historical_avg|floatformat:0 }}</td>
-                        {% endfor %}
-                        <td class="text-center">
-                            {% with max_historical=comparison_data.values|max_by:'historical_avg' %}
-                                {% for drug, data in comparison_data.items %}
-                                    {% if data.historical_avg == max_historical.historical_avg %}
-                                        <span class="winner-badge">{{ drug }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Trend Direction</strong></td>
-                        {% for drug in selected_drugs %}
-                            <td class="text-center">
-                                <span class="{% if comparison_data|lookup:drug.trend == 'increasing' %}text-success{% elif comparison_data|lookup:drug.trend == 'decreasing' %}text-danger{% else %}text-muted{% endif %}">
-                                    {{ comparison_data|lookup:drug.trend|capfirst }}
-                                </span>
-                            </td>
-                        {% endfor %}
-                        <td class="text-center">
-                            {% for drug, data in comparison_data.items %}
-                                {% if data.trend == 'increasing' %}
-                                    <span class="winner-badge">{{ drug }}</span>
-                                    {% break %}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Visualization Placeholder -->
-    <div class="row">
-        <div class="col-12">
-            <div class="radar-chart-container">
-                <h5 class="mb-3">
-                    <i class="fas fa-chart-radar me-2 text-primary"></i>
-                    Multi-Drug Performance Radar
-                </h5>
-                <canvas id="comparisonChart" width="400" height="200"></canvas>
-                <p class="text-muted mt-3">
-                    Interactive visualization comparing demand patterns across selected drugs
-                </p>
-            </div>
-        </div>
-    </div>
-
-    {% else %}
-    <!-- Empty State -->
-    <div class="add-drug-section">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 text-center">
-                <i class="fas fa-plus-circle fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">Select Drugs to Compare</h4>
-                <p class="text-muted mb-4">
-                    Choose 2-5 drugs from the dropdown above to start comparing their demand patterns, 
-                    forecasts, and trends side by side.
-                </p>
-                <button class="btn btn-primary" onclick="document.getElementById('drugSelector').focus()">
-                    <i class="fas fa-search me-2"></i>Start Selecting
+                    {% endfor %}
+                    {% if not selected_drugs %}
+                        <span class="text-gray-500 italic">No drugs selected.</span>
+                    {% endif %}
+                 </div>
+                 <button id="compareBtn" class="mt-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center space-x-2">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span>Update Comparison</span>
                 </button>
             </div>
         </div>
     </div>
+    
+    {% if selected_drugs and comparison_data %}
+    <!-- Comparison Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-{{ selected_drugs|length|default:'3' }} gap-6">
+        {% for drug in selected_drugs %}
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-t-4 border-indigo-500 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">{{ drug }}</h3>
+                    <span class="text-lg font-semibold {% if comparison_data|lookup:drug|lookup:'trend' == 'increasing' %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if comparison_data|lookup:drug|lookup:'trend' == 'increasing' %}
+                            <i class="bi bi-arrow-up-right"></i>
+                        {% else %}
+                            <i class="bi bi-arrow-down-right"></i>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm text-gray-600">30-Day Forecast Avg.</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ comparison_data|lookup:drug|lookup:'forecast_avg'|floatformat:0 }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">30-Day Historical Avg.</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ comparison_data|lookup:drug|lookup:'historical_avg'|floatformat:0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'ai_forecast:forecast' %}?drug={{ drug|urlencode }}" class="mt-6 block text-center w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition-all">
+                View Full Forecast
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Visualization -->
+     <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+            <i class="bi bi-radar mr-2 text-indigo-500"></i>
+            Multi-Drug Performance Radar
+        </h3>
+        <div class="relative h-96">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+     </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl text-center p-12">
+        <div class="mx-auto bg-indigo-100 text-indigo-600 w-16 h-16 rounded-full flex items-center justify-center">
+            <i class="bi bi-ui-checks-grid text-3xl"></i>
+        </div>
+        <h2 class="mt-6 text-2xl font-bold text-gray-900">Select Drugs to Get Started</h2>
+        <p class="mt-2 text-gray-600">Choose 2 to 5 drugs from the dropdown above to compare their demand patterns and forecasts.</p>
+        <button class="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all" onclick="document.getElementById('drugSelector').focus()">
+            Start Selecting
+        </button>
+    </div>
     {% endif %}
+
 </div>
 {% endblock %}
+
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -408,34 +137,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const compareBtn = document.getElementById('compareBtn');
     const selectedDrugsContainer = document.getElementById('selectedDrugs');
     
-    // Initialize multi-select
-    drugSelector.addEventListener('change', updateSelectedDrugs);
-    compareBtn.addEventListener('click', performComparison);
+    if (drugSelector) {
+        drugSelector.addEventListener('change', updateSelectedDrugsUI);
+    }
+    if (compareBtn) {
+        compareBtn.addEventListener('click', performComparison);
+    }
     
-    function updateSelectedDrugs() {
-        const selected = Array.from(drugSelector.selectedOptions).map(option => option.value);
+    function updateSelectedDrugsUI() {
+        const selectedOptions = Array.from(drugSelector.selectedOptions);
         
-        // Limit to 5 selections
-        if (selected.length > 5) {
-            selected.pop();
-            drugSelector.options[drugSelector.selectedIndex].selected = false;
-            alert('Maximum 5 drugs can be selected for comparison.');
+        // Limit selection to 5
+        if (selectedOptions.length > 5) {
+            alert('You can select a maximum of 5 drugs for comparison.');
+            // Deselect the last selected option
+            selectedOptions[selectedOptions.length - 1].selected = false;
             return;
         }
-        
-        // Update UI
+
         selectedDrugsContainer.innerHTML = '';
-        if (selected.length === 0) {
-            selectedDrugsContainer.innerHTML = '<span class="text-muted">No drugs selected</span>';
+        if (selectedOptions.length === 0) {
+            selectedDrugsContainer.innerHTML = '<span class="text-gray-500 italic">No drugs selected.</span>';
         } else {
-            selected.forEach(drug => {
+            selectedOptions.forEach(option => {
+                const drug = option.value;
                 const chip = document.createElement('span');
-                chip.className = 'drug-chip';
-                chip.setAttribute('data-drug', drug);
-                chip.innerHTML = `
-                    ${drug}
-                    <button type="button" class="remove-btn" onclick="removeDrug('${drug}')">×</button>
-                `;
+                chip.className = 'inline-flex items-center bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full';
+                chip.dataset.drug = drug;
+                chip.innerHTML = `${drug} <button type="button" class="ml-2 text-indigo-600 hover:text-indigo-800" onclick="removeDrug('${drug}')">&times;</button>`;
                 selectedDrugsContainer.appendChild(chip);
             });
         }
@@ -444,83 +173,73 @@ document.addEventListener('DOMContentLoaded', function() {
     function performComparison() {
         const selected = Array.from(drugSelector.selectedOptions).map(option => option.value);
         if (selected.length < 2) {
-            alert('Please select at least 2 drugs for comparison.');
+            alert('Please select at least 2 drugs for an effective comparison.');
             return;
         }
         
-        // Build URL with selected drugs
         const params = new URLSearchParams();
         selected.forEach(drug => params.append('drugs', drug));
         window.location.href = `{% url 'ai_forecast:comparison' %}?${params.toString()}`;
     }
     
-    // Initialize comparison chart if data exists
+    // Initialize Chart.js radar chart
     {% if selected_drugs and comparison_data %}
-    const ctx = document.getElementById('comparisonChart').getContext('2d');
-    const chartData = {
-        labels: ['Forecast Demand', 'Historical Demand', 'Growth Potential', 'Stability', 'Market Share'],
-        datasets: [
-            {% for drug in selected_drugs %}
-            {
-                label: '{{ drug }}',
-                data: [
-                    {{ comparison_data|lookup:drug.forecast_avg|default:0 }},
-                    {{ comparison_data|lookup:drug.historical_avg|default:0 }},
-                    {% if comparison_data|lookup:drug.trend == 'increasing' %}100{% elif comparison_data|lookup:drug.trend == 'decreasing' %}30{% else %}65{% endif %},
-                    {% random 60 90 %}, // Stability score (placeholder)
-                    {% random 10 25 %}  // Market share (placeholder)
-                ],
-                backgroundColor: `hsla({{ forloop.counter0|mul:60 }}, 70%, 60%, 0.2)`,
-                borderColor: `hsl({{ forloop.counter0|mul:60 }}, 70%, 50%)`,
-                borderWidth: 2,
-                pointBackgroundColor: `hsl({{ forloop.counter0|mul:60 }}, 70%, 50%)`
-            },
-            {% endfor %}
-        ]
-    };
-    
-    new Chart(ctx, {
-        type: 'radar',
-        data: chartData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 100
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'bottom'
+    const ctx = document.getElementById('comparisonChart')?.getContext('2d');
+    if (ctx) {
+        const chartData = {
+            labels: ['Forecast Demand', 'Historical Demand', 'Growth Potential'],
+            datasets: [
+                {% for drug in selected_drugs %}
+                {
+                    label: '{{ drug }}',
+                    data: [
+                        {{ comparison_data|lookup:drug|lookup:'forecast_avg'|default:0 }},
+                        {{ comparison_data|lookup:drug|lookup:'historical_avg'|default:0 }},
+                        {% if comparison_data|lookup:drug|lookup:'trend' == 'increasing' %}85{% else %}40{% endif %},
+                    ],
+                    backgroundColor: `hsla({{ forloop.counter0|multiply:75 }}, 90%, 70%, 0.2)`,
+                    borderColor: `hsl({{ forloop.counter0|multiply:75 }}, 90%, 60%)`,
+                    borderWidth: 2,
+                    pointBackgroundColor: `hsl({{ forloop.counter0|multiply:75 }}, 90%, 60%)`
+                },
+                {% endfor %}
+            ]
+        };
+        
+        new Chart(ctx, {
+            type: 'radar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                         grid: { color: 'rgba(0,0,0,0.05)' },
+                         angleLines: { color: 'rgba(0,0,0,0.05)' },
+                         pointLabels: { font: { size: 14 } }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
                 }
             }
-        }
-    });
+        });
+    }
     {% endif %}
 });
 
 function removeDrug(drugName) {
     const selector = document.getElementById('drugSelector');
-    Array.from(selector.options).forEach(option => {
-        if (option.value === drugName) {
-            option.selected = false;
-        }
-    });
-    document.getElementById('selectedDrugs').querySelector(`[data-drug="${drugName}"]`).remove();
-    
-    // Check if any drugs left
-    const remaining = Array.from(selector.selectedOptions);
-    if (remaining.length === 0) {
-        document.getElementById('selectedDrugs').innerHTML = '<span class="text-muted">No drugs selected</span>';
+    if (selector) {
+        Array.from(selector.options).forEach(option => {
+            if (option.value === drugName) {
+                option.selected = false;
+            }
+        });
+        // Manually trigger the change event to update the UI
+        selector.dispatchEvent(new Event('change'));
     }
 }
-
-// Template filters for JavaScript
-window.templateFilters = window.templateFilters || {};
-window.templateFilters.lookup = function(dict, key) {
-    return dict && dict[key] ? dict[key] : {};
-};
 </script>
 {% endblock %}

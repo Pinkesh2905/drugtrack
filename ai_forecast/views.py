@@ -53,42 +53,42 @@ class ForecastDashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
-@login_required
-def forecast_view(request):
-    """Function-based view for forecast dashboard"""
-    forecaster = DemandForecaster()
+# @login_required
+# def forecast_view(request):
+#     """Function-based view for forecast dashboard"""
+#     forecaster = DemandForecaster()
     
-    # Get available drugs
-    available_drugs = sorted(forecaster.drugs_data['drug_name'].unique().tolist())
+#     # Get available drugs
+#     available_drugs = sorted(forecaster.drugs_data['drug_name'].unique().tolist())
     
-    # Get summary statistics
-    summary_stats = forecaster.get_summary_statistics()
+#     # Get summary statistics
+#     summary_stats = forecaster.get_summary_statistics()
     
-    # Get top drugs by demand
-    top_drugs = forecaster.get_top_drugs_by_demand(5)
+#     # Get top drugs by demand
+#     top_drugs = forecaster.get_top_drugs_by_demand(5)
     
-    # Default drug for initial display
-    selected_drug = request.GET.get('drug', available_drugs[0] if available_drugs else None)
+#     # Default drug for initial display
+#     selected_drug = request.GET.get('drug', available_drugs[0] if available_drugs else None)
     
-    chart_data = None
-    forecast_data = None
+#     chart_data = None
+#     forecast_data = None
     
-    if selected_drug:
-        chart_data = forecaster.create_forecast_chart(selected_drug)
-        forecast_data = forecaster.forecast_demand(selected_drug, 90)
+#     if selected_drug:
+#         chart_data = forecaster.create_forecast_chart(selected_drug)
+#         forecast_data = forecaster.forecast_demand(selected_drug, 90)
     
-    context = {
-        'available_drugs': available_drugs,
-        'selected_drug': selected_drug,
-        'summary_stats': summary_stats,
-        'top_drugs': top_drugs,
-        'chart_data': chart_data,
-        'forecast_data': forecast_data,
-        'page_title': 'AI Demand Forecasting',
-        'breadcrumb': 'Forecasting'
-    }
+#     context = {
+#         'available_drugs': available_drugs,
+#         'selected_drug': selected_drug,
+#         'summary_stats': summary_stats,
+#         'top_drugs': top_drugs,
+#         'chart_data': chart_data,
+#         'forecast_data': forecast_data,
+#         'page_title': 'AI Demand Forecasting',
+#         'breadcrumb': 'Forecasting'
+#     }
     
-    return render(request, 'ai_forecast/forecast.html', context)
+#     return render(request, 'ai_forecast/forecast.html', context)
 
 
 @login_required

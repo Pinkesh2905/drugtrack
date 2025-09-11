@@ -1,174 +1,509 @@
 {% extends "base.html" %}
-{% block title %}{{ page_title }}{% endblock %}
+{% load static %}
+
+{% block title %}{{ page_title }} - DrugTrack{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bounce-gentle': 'bounceGentle 2s infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        bounceGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.5)' },
+          '100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.8)' },
+        }
+      },
+      backdropBlur: {
+        xs: '2px',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+@keyframes counter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.counter-animate {
+  animation: counter 0.8s ease-out forwards;
+}
+
+.glass-effect {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-        <!-- Header Section -->
-        <div class="text-center mb-12">
-            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse shadow-lg">
-                <i class="bi bi-graph-up text-white text-3xl"></i>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+  <div class="container mx-auto px-4 py-8 max-w-7xl">
+    
+    <!-- Header Section -->
+    <div class="relative mb-12 overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 p-8 shadow-2xl animate-fade-in">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, white 2px, transparent 2px), radial-gradient(circle at 75% 75%, white 2px, transparent 2px); background-size: 50px 50px;"></div>
+      </div>
+      
+      <div class="relative flex flex-col lg:flex-row items-center justify-between">
+        <div class="text-white mb-6 lg:mb-0">
+          <div class="flex items-center mb-4">
+            <div class="p-3 bg-white/20 rounded-2xl mr-4 backdrop-blur-sm">
+              <i class="fas fa-pills text-2xl"></i>
             </div>
-            <h1 class="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                DrugTrack Dashboard
+            <h1 class="text-4xl lg:text-5xl font-bold tracking-tight">
+              DrugTrack Dashboard
             </h1>
-            <p class="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-                Comprehensive system overview for all stakeholders in the pharmaceutical supply chain
-            </p>
+          </div>
+          <p class="text-xl text-white/90 font-light max-w-2xl leading-relaxed">
+            Advanced pharmaceutical supply chain management with real-time monitoring and blockchain verification
+          </p>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <!-- Total Batches Card -->
-            <div class="group bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h5 class="text-white/80 text-sm font-medium uppercase tracking-wider">Total Batches</h5>
-                            <h3 class="text-4xl font-bold text-white mt-2">{{ total_batches }}</h3>
-                        </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                            <i class="bi bi-boxes text-white text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center text-blue-600">
-                        <i class="bi bi-arrow-up-right mr-2"></i>
-                        <span class="text-sm font-medium">Active in supply chain</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-2">Total number of drug batches currently being tracked</p>
-                </div>
-            </div>
-
-            <!-- Expired Batches Card -->
-            <div class="group bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
-                <div class="bg-gradient-to-r from-red-500 to-pink-600 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h5 class="text-white/80 text-sm font-medium uppercase tracking-wider">Expired</h5>
-                            <h3 class="text-4xl font-bold text-white mt-2">{{ expired_count }}</h3>
-                        </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                            <i class="bi bi-exclamation-triangle text-white text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center text-red-600">
-                        <i class="bi bi-arrow-down-right mr-2"></i>
-                        <span class="text-sm font-medium">Requires attention</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-2">Batches that have passed their expiry date</p>
-                </div>
-            </div>
-
-            <!-- Expiring Soon Card -->
-            <div class="group bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
-                <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h5 class="text-white/80 text-sm font-medium uppercase tracking-wider">Expiring Soon</h5>
-                            <h3 class="text-4xl font-bold text-white mt-2">{{ expiring_soon_count }}</h3>
-                        </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                            <i class="bi bi-clock text-white text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center text-amber-600">
-                        <i class="bi bi-arrow-right mr-2"></i>
-                        <span class="text-sm font-medium">Action needed</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-2">Batches expiring within the next 30 days</p>
-                </div>
-            </div>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="glass-effect bg-white/20 backdrop-blur-md rounded-full px-4 py-2 border border-white/30">
+            <i class="fas fa-check-circle text-green-300 mr-2"></i>
+            <span class="text-sm font-medium">System Online</span>
+          </div>
+          <div class="glass-effect bg-white/20 backdrop-blur-md rounded-full px-4 py-2 border border-white/30">
+            <i class="fas fa-bell text-yellow-300 mr-2"></i>
+            <span class="text-sm font-medium">{{ active_alerts|default:0 }} Active Alerts</span>
+          </div>
         </div>
-
-        <!-- Quick Actions Section -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quick Actions</h2>
-                <p class="text-gray-600">Access key features based on your role</p>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="#" class="group bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 p-6 rounded-xl border border-blue-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="bi bi-search text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-blue-800 mb-2">Search Batches</h3>
-                    <p class="text-blue-600 text-sm">Find and track specific drug batches</p>
-                </a>
-
-                <a href="#" class="group bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 p-6 rounded-xl border border-green-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="bi bi-shield-check text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-green-800 mb-2">Verify Drugs</h3>
-                    <p class="text-green-600 text-sm">Authenticate drug authenticity</p>
-                </a>
-
-                <a href="#" class="group bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 p-6 rounded-xl border border-purple-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="bi bi-graph-up text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-purple-800 mb-2">Analytics</h3>
-                    <p class="text-purple-600 text-sm">View detailed reports and trends</p>
-                </a>
-
-                <a href="#" class="group bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 p-6 rounded-xl border border-amber-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="bi bi-bell text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-amber-800 mb-2">Alerts</h3>
-                    <p class="text-amber-600 text-sm">Manage notifications and warnings</p>
-                </a>
-            </div>
-        </div>
-
-        <!-- System Status -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <i class="bi bi-activity mr-3 text-green-500"></i>
-                System Status
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
-                        <span class="font-medium text-green-800">Blockchain Network</span>
-                    </div>
-                    <span class="text-green-600 text-sm font-medium">Online</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
-                        <span class="font-medium text-green-800">Database</span>
-                    </div>
-                    <span class="text-green-600 text-sm font-medium">Connected</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-3"></div>
-                        <span class="font-medium text-blue-800">API Services</span>
-                    </div>
-                    <span class="text-blue-600 text-sm font-medium">Active</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-purple-500 rounded-full animate-pulse mr-3"></div>
-                        <span class="font-medium text-purple-800">Monitoring</span>
-                    </div>
-                    <span class="text-purple-600 text-sm font-medium">Running</span>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+      <!-- Total Batches -->
+      <div class="group hover-lift bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Total Batches
+            </div>
+            <div class="text-3xl font-bold gradient-text counter-animate">
+              {{ total_batches|default:0 }}
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Active in supply chain</p>
+          </div>
+          <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-xl shadow-lg">
+            <i class="fas fa-boxes text-white text-2xl"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full" style="width: 85%"></div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">85%</span>
+        </div>
+      </div>
+
+      <!-- Active Batches -->
+      <div class="group hover-lift bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Active Batches
+            </div>
+            <div class="text-3xl font-bold text-emerald-600 counter-animate">
+              {{ active_batches|default:0 }}
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Currently in circulation</p>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-500 to-green-600 p-4 rounded-xl shadow-lg">
+            <i class="fas fa-check-circle text-white text-2xl"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-gradient-to-r from-emerald-500 to-green-600 h-2 rounded-full" style="width: 92%"></div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">92%</span>
+        </div>
+      </div>
+
+      <!-- Expired -->
+      <div class="group hover-lift bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Expired
+            </div>
+            <div class="text-3xl font-bold text-red-600 counter-animate">
+              {{ expired_count|default:0 }}
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Requires attention</p>
+          </div>
+          <div class="bg-gradient-to-br from-red-500 to-pink-600 p-4 rounded-xl shadow-lg">
+            <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-gradient-to-r from-red-500 to-pink-600 h-2 rounded-full" style="width: 15%"></div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">15%</span>
+        </div>
+      </div>
+
+      <!-- Expiring Soon -->
+      <div class="group hover-lift bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Expiring Soon
+            </div>
+            <div class="text-3xl font-bold text-amber-600 counter-animate">
+              {{ expiring_soon_count|default:0 }}
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Next 30 days</p>
+          </div>
+          <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-xl shadow-lg">
+            <i class="fas fa-clock text-white text-2xl"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full" style="width: 28%"></div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">28%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-12">
+      <div class="flex items-center mb-8">
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
+          <i class="fas fa-bolt text-white"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900">Quick Actions</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <a href="{% url 'inventory:list_batches' %}" class="group hover-lift block bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:border-indigo-200 transition-all duration-300">
+          <div class="flex items-center">
+            <div class="bg-gradient-to-br from-indigo-500 to-blue-600 p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-search text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                Search Batches
+              </h3>
+              <p class="text-sm text-gray-600">Find and track drug batches</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{% url 'inventory:verify_drug' %}" class="group hover-lift block bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:border-emerald-200 transition-all duration-300">
+          <div class="flex items-center">
+            <div class="bg-gradient-to-br from-emerald-500 to-green-600 p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-shield-alt text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors">
+                Verify Drugs
+              </h3>
+              <p class="text-sm text-gray-600">Authenticate drug authenticity</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{% url 'inventory:analytics' %}" class="group hover-lift block bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:border-cyan-200 transition-all duration-300">
+          <div class="flex items-center">
+            <div class="bg-gradient-to-br from-cyan-500 to-blue-600 p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-chart-bar text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-cyan-600 transition-colors">
+                Analytics
+              </h3>
+              <p class="text-sm text-gray-600">View detailed reports</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{% url 'iot_mock:temperature' %}" class="group hover-lift block bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:border-amber-200 transition-all duration-300">
+          <div class="flex items-center">
+            <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-thermometer-half text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">
+                Temperature
+              </h3>
+              <p class="text-sm text-gray-600">Cold chain monitoring</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Recent Activity -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center">
+              <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
+                <i class="fas fa-history text-white"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900">Recent Activity</h3>
+            </div>
+          </div>
+          
+          <div class="divide-y divide-gray-100">
+            {% if recent_transactions %}
+              {% for transaction in recent_transactions %}
+                <div class="p-6 hover:bg-gray-50 transition-colors duration-200">
+                  <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-xl shadow-sm">
+                      <i class="fas fa-exchange-alt text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center justify-between">
+                        <h4 class="font-semibold text-gray-900">
+                          {{ transaction.get_transaction_type_display|default:"Transaction" }}
+                        </h4>
+                        <span class="text-sm text-gray-500">
+                          {{ transaction.created_at|timesince|default:"Recently" }} ago
+                        </span>
+                      </div>
+                      <p class="text-gray-600 text-sm mt-1">
+                        {{ transaction.batch.name|default:"Unknown Batch" }} - Batch {{ transaction.batch.batch_number|default:"N/A" }}
+                      </p>
+                      <div class="flex items-center space-x-2 mt-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                          {{ transaction.quantity|default:0 }} {{ transaction.batch.unit|default:"units" }}
+                        </span>
+                        {% if transaction.performed_by %}
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {{ transaction.performed_by.get_full_name|default:transaction.performed_by.username }}
+                          </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="p-12 text-center">
+                <i class="fas fa-history text-gray-300 text-5xl mb-4"></i>
+                <p class="text-gray-500 text-lg">No recent activity</p>
+                <p class="text-gray-400 text-sm">Transactions will appear here when they occur</p>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="p-6 bg-gray-50 border-t border-gray-100">
+            <a href="{% url 'inventory:list_batches' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 text-sm font-medium">
+              <i class="fas fa-external-link-alt mr-2"></i>
+              View All Activity
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100">
+          <div class="flex items-center">
+            <div class="bg-gradient-to-r from-emerald-500 to-green-600 p-2 rounded-lg mr-3">
+              <i class="fas fa-server text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">System Status</h3>
+          </div>
+        </div>
+        
+        <div class="p-6 space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse-slow"></div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Inventory System</h4>
+              <p class="text-sm text-gray-600">All services operational</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse-slow"></div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Blockchain Network</h4>
+              <p class="text-sm text-gray-600">Verification active</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-3 h-3 {% if iot_summary.system_status == 'online' %}bg-green-500{% elif iot_summary.system_status == 'warning' %}bg-amber-500{% else %}bg-red-500{% endif %} rounded-full {% if iot_summary.system_status != 'offline' %}animate-pulse-slow{% endif %}"></div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">IoT Monitoring</h4>
+              <p class="text-sm text-gray-600">
+                {{ iot_summary.safe_count|default:0 }}/{{ iot_summary.total_locations|default:0 }} locations safe
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-3 h-3 {% if active_alerts > 0 %}bg-amber-500 animate-pulse-slow{% else %}bg-green-500{% endif %} rounded-full"></div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Alert System</h4>
+              <p class="text-sm text-gray-600">{{ active_alerts|default:0 }} active alerts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced counter animation with staggered delays
+    const counters = document.querySelectorAll('.counter-animate');
+    
+    const animateCounters = () => {
+        counters.forEach((counter, index) => {
+            const target = parseInt(counter.textContent) || 0;
+            if (target === 0) return;
+            
+            // Add staggered delay
+            setTimeout(() => {
+                let current = 0;
+                const increment = target / 60;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(current);
+                }, 25);
+            }, index * 150);
+        });
+    };
+
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-slide-up');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all cards
+    document.querySelectorAll('.hover-lift').forEach(card => {
+        observer.observe(card);
+    });
+
+    // Start counter animations
+    animateCounters();
+
+    // Auto-refresh with fade effect
+    let refreshTimer;
+    const startAutoRefresh = () => {
+        refreshTimer = setInterval(() => {
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }, 300000); // 5 minutes
+    };
+
+    // Pause auto-refresh on user interaction
+    let userActive = false;
+    const resetRefreshTimer = () => {
+        userActive = true;
+        clearInterval(refreshTimer);
+        setTimeout(() => {
+            if (!userActive) startAutoRefresh();
+        }, 60000); // Resume after 1 minute of inactivity
+    };
+
+    ['click', 'scroll', 'keypress'].forEach(event => {
+        document.addEventListener(event, () => {
+            userActive = false;
+            resetRefreshTimer();
+        });
+    });
+
+    startAutoRefresh();
+
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

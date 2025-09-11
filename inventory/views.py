@@ -187,6 +187,85 @@ def delete_batch(request, batch_id):
             'message': f'Error deleting batch: {str(e)}'
         })
 
+# inventory/views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse # Import HttpResponse
+import csv # Import the csv module
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import DrugBatch
+# ... other imports
+
+@login_required
+def export_expired_csv(request):
+    """
+    Generates and serves a CSV file of all expired drug batches.
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="expired_batches.csv"'
+
+    writer = csv.writer(response)
+    # Write the header row
+    writer.writerow(['Batch Number', 'Drug Name', 'Manufacturer', 'Expiry Date', 'Quantity'])
+
+    # Get expired batches
+    expired_batches = DrugBatch.objects.filter(expiry_date__lt=timezone.now().date())
+    
+    # Write data rows
+    for batch in expired_batches:
+        writer.writerow([batch.batch_number, batch.name, batch.manufacturer, batch.expiry_date, batch.quantity])
+
+    return response
+
+# inventory/views.py
+# ... other imports
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+
+# ... other views
+
+@login_required
+@require_POST # Ensures this view only accepts POST requests
+def alert_all_expired(request):
+    """
+    Placeholder logic to handle the 'Alert All' action for expired batches.
+    """
+    expired_batches = DrugBatch.objects.filter(expiry_date__lt=timezone.now().date())
+    
+    # In a real app, you would loop through expired_batches and send alerts:
+    # for batch in expired_batches:
+    #     send_alert_for_batch(batch)
+
+    count = expired_batches.count()
+    if count > 0:
+        messages.success(request, f'An alert has been successfully issued for {count} expired batch(es).')
+    else:
+        messages.info(request, 'No expired batches found to alert.')
+
+    return redirect('dashboard:regulator_dashboard')
+
+# inventory/views.py
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+# ... your other views ...
+
+@login_required
+def analytics_view(request):
+    """
+    Displays the analytics dashboard.
+    (This is a placeholder and can be expanded later with real data)
+    """
+    context = {
+        'title': 'Analytics Dashboard'
+        # You can pass real data here later
+        # 'total_batches': Batch.objects.count(),
+        # 'expired_drugs': Batch.objects.filter(expiry_date__lt=timezone.now()).count(),
+    }
+    return render(request, 'inventory/analytics.html', context)
+
+# ... rest of your views
 
 # API endpoint for QR code verification
 @csrf_exempt

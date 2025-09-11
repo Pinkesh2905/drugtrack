@@ -13,53 +13,76 @@
     
     <!-- Custom CSS -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --patient-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --hospital-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --pharma-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --regulator-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             background-attachment: fixed;
             min-height: 100vh;
         }
         
         .glass-effect {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .navbar-glass {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
         }
         
         .card-hover {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
         }
         
         .card-hover:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-12px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
         }
         
         .btn-gradient {
             background: var(--primary-gradient);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-gradient:hover::before {
+            left: 100%;
         }
         
         .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5);
         }
         
         .animate-float {
@@ -67,54 +90,128 @@
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(1deg); }
+            66% { transform: translateY(5px) rotate(-1deg); }
         }
         
         .role-badge {
             background: var(--success-gradient);
             color: white;
             border: none;
+            animation: pulse 2s infinite;
         }
+        
+        .role-badge.patient { background: var(--patient-gradient); }
+        .role-badge.hospital { background: var(--hospital-gradient); }
+        .role-badge.pharma { background: var(--pharma-gradient); }
+        .role-badge.regulator { background: var(--regulator-gradient); }
         
         .footer-pattern {
             background-image: 
-                radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
-            background-size: 20px 20px;
+                radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
+            background-size: 25px 25px;
         }
         
         .message-slide {
-            animation: slideInDown 0.5s ease-out;
+            animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         @keyframes slideInDown {
             from {
-                transform: translateY(-100%);
+                transform: translateY(-100%) scale(0.8);
                 opacity: 0;
             }
             to {
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
                 opacity: 1;
             }
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 12px;
         }
         
         ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
         }
         
         ::-webkit-scrollbar-thumb {
             background: var(--primary-gradient);
-            border-radius: 10px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
         }
         
         ::-webkit-scrollbar-thumb:hover {
             background: var(--secondary-gradient);
+        }
+        
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::before {
+            width: 100%;
+        }
+        
+        .dropdown-menu {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .dropdown-menu.show {
+            transform: translateY(0) scale(1);
+        }
+        
+        .aurora-bg {
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: aurora 15s ease infinite;
+        }
+        
+        @keyframes aurora {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            to { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+        }
+
+        /* Improved mobile responsiveness */
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                backdrop-filter: blur(20px);
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 15px;
+                margin-top: 10px;
+                padding: 15px;
+            }
         }
     </style>
     
@@ -128,9 +225,15 @@
                     colors: {
                         'primary': {
                             50: '#f0f4ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
                             500: '#667eea',
                             600: '#5a67d8',
                             700: '#4c51bf',
+                            800: '#434190',
+                            900: '#3c366b',
                         },
                         'secondary': {
                             500: '#764ba2',
@@ -139,6 +242,8 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in',
                         'slide-up': 'slideUp 0.5s ease-out',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
                     }
                 }
             }
@@ -147,52 +252,82 @@
     
     {% block extra_css %}{% endblock %}
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-purple-600">
-    <!-- Background Pattern -->
+<body class="min-h-screen aurora-bg">
+    <!-- Enhanced Background Pattern -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-white rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-pink-400 to-red-500 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-green-400 to-blue-500 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse" style="animation-delay: -4s;"></div>
+        
+        <!-- Floating particles -->
+        <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 animate-ping" style="animation-delay: 1s;"></div>
+        <div class="absolute top-3/4 right-1/4 w-1 h-1 bg-blue-300 rounded-full opacity-40 animate-ping" style="animation-delay: 3s;"></div>
+        <div class="absolute bottom-1/4 left-3/4 w-3 h-3 bg-purple-300 rounded-full opacity-50 animate-ping" style="animation-delay: 5s;"></div>
     </div>
     
-    <!-- Navigation -->
+    <!-- Enhanced Navigation -->
     <nav class="navbar-glass sticky top-0 z-50 border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="{% url 'dashboard:home' %}" class="flex items-center space-x-2 text-gray-800 hover:text-purple-600 transition-colors duration-300">
-                        <div class="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
+                    <a href="{% url 'dashboard:home' %}" class="flex items-center space-x-2 text-gray-800 hover:text-purple-600 transition-all duration-300 group">
+                        <div class="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg glow-effect group-hover:scale-110 transition-transform duration-300">
                             <i class="bi bi-shield-fill-check text-white text-xl"></i>
                         </div>
                         <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">DrugTrack</span>
                     </a>
                     
                     <div class="hidden md:flex space-x-6">
-                        <a href="{% url 'dashboard:home' %}" class="flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
-                            <i class="bi bi-speedometer2"></i>
-                            <span class="font-medium">Dashboard</span>
+                        <a href="{% url 'dashboard:home' %}" class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <i class="bi bi-house-door-fill"></i>
+                            <span class="font-medium">Home</span>
                         </a>
                         
                         {% if user.is_authenticated %}
+                        <!-- Dynamic Dashboard Link Based on User Role -->
+                        {% if user.role == 'patient' %}
+                        <a href="{% url 'dashboard:patient_dashboard' %}" class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <i class="bi bi-speedometer2"></i>
+                            <span class="font-medium">Patient Dashboard</span>
+                        </a>
+                        {% elif user.role == 'hospital' %}
+                        <a href="{% url 'dashboard:hospital_dashboard' %}" class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <i class="bi bi-hospital"></i>
+                            <span class="font-medium">Hospital Dashboard</span>
+                        </a>
+                        {% elif user.role == 'pharma' %}
+                        <a href="{% url 'dashboard:pharma_dashboard' %}" class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <i class="bi bi-capsule"></i>
+                            <span class="font-medium">Pharma Dashboard</span>
+                        </a>
+                        {% elif user.role == 'regulator' %}
+                        <a href="{% url 'dashboard:regulator_dashboard' %}" class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <i class="bi bi-shield-check"></i>
+                            <span class="font-medium">Regulator Dashboard</span>
+                        </a>
+                        {% endif %}
+                        
                         <div class="relative group">
-                            <button class="flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
+                            <button class="nav-link flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/20">
                                 <i class="bi bi-grid-3x3-gap-fill"></i>
                                 <span class="font-medium">Apps</span>
-                                <i class="bi bi-chevron-down ml-1 text-sm"></i>
+                                <i class="bi bi-chevron-down ml-1 text-sm transition-transform duration-300 group-hover:rotate-180"></i>
                             </button>
-                            <div class="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                                <a href="{% url 'inventory:index' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200 rounded-t-xl">
-                                    <i class="bi bi-box-seam text-blue-500"></i>
-                                    <span>Inventory</span>
-                                </a>
-                                <a href="{% url 'ai_forecast:forecast' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200">
-                                    <i class="bi bi-graph-up-arrow text-green-500"></i>
-                                    <span>AI Forecast</span>
-                                </a>
-                                <a href="{% url 'iot_mock:dashboard' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200 rounded-b-xl">
-                                    <i class="bi bi-thermometer-half text-red-500"></i>
-                                    <span>IoT Monitoring</span>
-                                </a>
+                            <div class="absolute top-full left-0 mt-2 w-48 dropdown-menu rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                <div class="py-2">
+                                    <a href="{% url 'inventory:index' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-purple-600 transition-all duration-200">
+                                        <i class="bi bi-box-seam text-blue-500"></i>
+                                        <span>Inventory</span>
+                                    </a>
+                                    <a href="{% url 'ai_forecast:forecast' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-600 transition-all duration-200">
+                                        <i class="bi bi-graph-up-arrow text-green-500"></i>
+                                        <span>AI Forecast</span>
+                                    </a>
+                                    <a href="{% url 'iot_mock:dashboard' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-600 transition-all duration-200">
+                                        <i class="bi bi-thermometer-half text-red-500"></i>
+                                        <span>IoT Monitoring</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
@@ -202,50 +337,97 @@
                 <div class="flex items-center space-x-4">
                     {% if user.is_authenticated %}
                     <div class="relative group">
-                        <button class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-all duration-300 border border-white/20">
-                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                        <button class="flex items-center space-x-2 glass-effect hover:bg-white/20 px-4 py-2 rounded-xl transition-all duration-300 border border-white/20 group-hover:scale-105">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center glow-effect">
                                 <i class="bi bi-person-circle text-white"></i>
                             </div>
                             <div class="hidden md:block text-left">
-                                <p class="text-gray-800 font-medium text-sm">{{ user.first_name|default:user.username }}</p>
-                                <p class="text-gray-600 text-xs">{{ user.get_role_display }}</p>
+                                <p class="text-gray-800 font-semibold text-sm">{{ user.first_name|default:user.username }}</p>
+                                <p class="role-badge {{ user.role }} text-xs px-2 py-0.5 rounded-full inline-block">{{ user.get_role_display }}</p>
                             </div>
-                            <i class="bi bi-chevron-down text-gray-600"></i>
+                            <i class="bi bi-chevron-down text-gray-600 transition-transform duration-300 group-hover:rotate-180"></i>
                         </button>
-                        <div class="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                            <a href="{% url 'users:profile' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200 rounded-t-xl">
-                                <i class="bi bi-person-gear text-blue-500"></i>
-                                <span>Profile</span>
-                            </a>
-                            <hr class="border-gray-200">
-                            <a href="{% url 'users:logout' %}" class="flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200 rounded-b-xl">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Logout</span>
-                            </a>
+                        <div class="absolute top-full right-0 mt-2 w-52 dropdown-menu rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                            <div class="py-2">
+                                <div class="px-4 py-2 border-b border-gray-200">
+                                    <p class="text-sm font-medium text-gray-700">{{ user.first_name }} {{ user.last_name }}</p>
+                                    <p class="text-xs text-gray-500">{{ user.email }}</p>
+                                </div>
+                                <a href="{% url 'users:profile' %}" class="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-purple-600 transition-all duration-200">
+                                    <i class="bi bi-person-gear text-blue-500"></i>
+                                    <span>Profile Settings</span>
+                                </a>
+                                <hr class="border-gray-200 mx-2">
+                                <form action="{% url 'users:logout' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full text-left flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-200 rounded-b-xl">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     {% else %}
-                    <a href="{% url 'users:login' %}" class="flex items-center space-x-2 text-gray-700 hover:text-purple-600 transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-white/20">
+                    <a href="{% url 'users:login' %}" class="nav-link flex items-center space-x-2 text-gray-700 hover:text-purple-600 transition-all duration-300 px-4 py-2 rounded-lg hover:bg-white/20">
                         <i class="bi bi-box-arrow-in-right"></i>
                         <span class="font-medium">Login</span>
                     </a>
-                    <a href="{% url 'users:register' %}" class="btn-gradient text-white px-6 py-2 rounded-lg font-medium">
+                    <a href="{% url 'users:register' %}" class="btn-gradient text-white px-6 py-2 rounded-xl font-medium shadow-lg">
                         <i class="bi bi-person-plus mr-2"></i>Register
                     </a>
+                    {% endif %}
+                    
+                    <!-- Mobile menu button -->
+                    <button class="md:hidden p-2 rounded-lg hover:bg-white/20 transition-colors duration-300" onclick="toggleMobileMenu()">
+                        <i class="bi bi-list text-gray-700 text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation Menu -->
+            <div id="mobile-menu" class="md:hidden hidden navbar-collapse mt-4 rounded-lg">
+                <div class="space-y-2">
+                    <a href="{% url 'dashboard:home' %}" class="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                        <i class="bi bi-house-door-fill mr-2"></i>Home
+                    </a>
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'patient' %}
+                        <a href="{% url 'dashboard:patient_dashboard' %}" class="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                            <i class="bi bi-speedometer2 mr-2"></i>Patient Dashboard
+                        </a>
+                        {% elif user.role == 'hospital' %}
+                        <a href="{% url 'dashboard:hospital_dashboard' %}" class="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                            <i class="bi bi-hospital mr-2"></i>Hospital Dashboard
+                        </a>
+                        {% elif user.role == 'pharma' %}
+                        <a href="{% url 'dashboard:pharma_dashboard' %}" class="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                            <i class="bi bi-capsule mr-2"></i>Pharma Dashboard
+                        </a>
+                        {% elif user.role == 'regulator' %}
+                        <a href="{% url 'dashboard:regulator_dashboard' %}" class="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                            <i class="bi bi-shield-check mr-2"></i>Regulator Dashboard
+                        </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Messages -->
+    <!-- Enhanced Messages -->
     {% if messages %}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         {% for message in messages %}
-        <div class="message-slide mb-3 p-4 rounded-xl border-l-4 {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %} shadow-lg backdrop-blur-sm">
-            <div class="flex items-center space-x-2">
-                <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'error' %}exclamation-triangle-fill{% elif message.tags == 'warning' %}exclamation-circle-fill{% else %}info-circle-fill{% endif %} text-lg"></i>
+        <div class="message-slide mb-3 p-4 rounded-2xl border-l-4 {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border-green-500 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-pink-50 border-red-500 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-500 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500 text-blue-800{% endif %} shadow-xl backdrop-blur-sm">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 rounded-full {% if message.tags == 'success' %}bg-green-100{% elif message.tags == 'error' %}bg-red-100{% elif message.tags == 'warning' %}bg-yellow-100{% else %}bg-blue-100{% endif %}">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'error' %}exclamation-triangle-fill{% elif message.tags == 'warning' %}exclamation-circle-fill{% else %}info-circle-fill{% endif %} text-lg"></i>
+                </div>
                 <span class="font-medium">{{ message }}</span>
+                <button class="ml-auto text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         </div>
         {% endfor %}
@@ -257,17 +439,32 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {% block content %}
             <div class="text-center py-20">
-                <div class="glass-effect rounded-3xl p-12 max-w-2xl mx-auto">
-                    <div class="animate-float">
-                        <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="bi bi-shield-fill-check text-white text-4xl"></i>
+                <div class="glass-effect rounded-3xl p-12 max-w-4xl mx-auto card-hover">
+                    <div class="animate-float mb-8">
+                        <div class="w-32 h-32 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-full flex items-center justify-center mx-auto glow-effect">
+                            <i class="bi bi-shield-fill-check text-white text-6xl"></i>
                         </div>
                     </div>
-                    <h1 class="text-5xl font-bold text-white mb-4">Welcome to DrugTrack</h1>
-                    <p class="text-xl text-white/80 mb-8">Drug Inventory and Supply Chain Tracking System</p>
-                    <div class="flex justify-center space-x-4">
-                        <a href="{% url 'users:login' %}" class="btn-gradient px-8 py-3 rounded-xl text-white font-medium">Get Started</a>
-                        <a href="#" class="bg-white/20 hover:bg-white/30 px-8 py-3 rounded-xl text-white font-medium transition-all duration-300">Learn More</a>
+                    <h1 class="text-6xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-6">Welcome to DrugTrack</h1>
+                    <p class="text-2xl text-white/90 mb-12 font-light">Advanced Drug Inventory & Supply Chain Tracking System</p>
+                    <div class="flex flex-wrap justify-center gap-6">
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'users:login' %}" class="btn-gradient px-10 py-4 rounded-2xl text-white font-semibold text-lg shadow-2xl">
+                            <i class="bi bi-rocket-takeoff mr-2"></i>Get Started
+                        </a>
+                        <a href="#" class="glass-effect hover:bg-white/20 px-10 py-4 rounded-2xl text-white font-semibold text-lg transition-all duration-300 shadow-xl">
+                            <i class="bi bi-info-circle mr-2"></i>Learn More
+                        </a>
+                        {% else %}
+                        <a href="
+                        {% if user.role == 'patient' %}{% url 'dashboard:patient_dashboard' %}
+                        {% elif user.role == 'hospital' %}{% url 'dashboard:hospital_dashboard' %}
+                        {% elif user.role == 'pharma' %}{% url 'dashboard:pharma_dashboard' %}
+                        {% elif user.role == 'regulator' %}{% url 'dashboard:regulator_dashboard' %}
+                        {% else %}{% url 'dashboard:home' %}{% endif %}" class="btn-gradient px-10 py-4 rounded-2xl text-white font-semibold text-lg shadow-2xl">
+                            <i class="bi bi-speedometer2 mr-2"></i>Go to Dashboard
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -275,43 +472,206 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 footer-pattern relative mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid md:grid-cols-2 gap-8">
+    <!-- Enhanced Footer -->
+    <footer class="bg-gray-900 footer-pattern relative mt-20 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-pink-900/20"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid md:grid-cols-3 gap-12">
                 <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                            <i class="bi bi-shield-fill-check text-white text-xl"></i>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl glow-effect">
+                            <i class="bi bi-shield-fill-check text-white text-2xl"></i>
                         </div>
-                        <span class="text-2xl font-bold text-white">DrugTrack</span>
+                        <span class="text-3xl font-bold text-white">DrugTrack</span>
                     </div>
-                    <p class="text-gray-300 mb-4">Ensuring drug safety through blockchain and IoT technology.</p>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed">Revolutionizing pharmaceutical supply chain management through blockchain technology and IoT integration.</p>
                     <div class="flex space-x-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                            <i class="bi bi-twitter text-white"></i>
+                        <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-red-600 rounded-xl flex items-center justify-center cursor-pointer hover:scale-125 transition-all duration-300 glow-effect">
+                            <i class="bi bi-linkedin text-white text-xl"></i>
                         </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                            <i class="bi bi-linkedin text-white"></i>
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-xl flex items-center justify-center cursor-pointer hover:scale-125 transition-all duration-300 glow-effect">
+                            <i class="bi bi-github text-white text-xl"></i>
                         </div>
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                            <i class="bi bi-github text-white"></i>
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center cursor-pointer hover:scale-125 transition-all duration-300 glow-effect">
+                            <i class="bi bi-instagram text-white text-xl"></i>
                         </div>
                     </div>
                 </div>
-                <div class="text-md-right text-center md:text-right">
-                    <p class="text-gray-300 mb-2">&copy; 2025 DrugTrack</p>
-                    <p class="text-gray-400 text-sm">Crafted with ❤️ by Sid & Co.</p>
-                    <div class="mt-4 space-x-4">
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Privacy</a>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Terms</a>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Support</a>
+                
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6">Quick Links</h3>
+                    <div class="space-y-3">
+                        <a href="{% url 'dashboard:home' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-house-door mr-2"></i>Home
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'inventory:index' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-box-seam mr-2"></i>Inventory Management
+                        </a>
+                        <a href="{% url 'ai_forecast:forecast' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-graph-up-arrow mr-2"></i>AI Forecasting
+                        </a>
+                        <a href="{% url 'iot_mock:dashboard' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-thermometer-half mr-2"></i>IoT Monitoring
+                        </a>
+                        {% else %}
+                        <a href="{% url 'users:login' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-box-arrow-in-right mr-2"></i>Login
+                        </a>
+                        <a href="{% url 'users:register' %}" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-person-plus mr-2"></i>Register
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6">Support & Legal</h3>
+                    <div class="space-y-3 mb-8">
+                        <a href="#" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-shield-check mr-2"></i>Privacy Policy
+                        </a>
+                        <a href="#" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-file-text mr-2"></i>Terms of Service
+                        </a>
+                        <a href="#" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-headset mr-2"></i>Support Center
+                        </a>
+                        <a href="#" class="block text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300">
+                            <i class="bi bi-question-circle mr-2"></i>FAQ
+                        </a>
+                    </div>
+                    
+                    <div class="text-center md:text-left">
+                        <p class="text-gray-300 mb-2 font-medium">&copy; 2025 DrugTrack Platform</p>
+                        <p class="text-gray-400 text-sm">Crafted with ❤️ by Sid & Co.</p>
+                        <p class="text-gray-500 text-xs mt-2">Securing pharmaceutical supply chains worldwide</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom border with gradient -->
+            <div class="mt-12 pt-8 border-t border-gray-700">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                        <span class="text-gray-400 text-sm">Powered by:</span>
+                        <div class="flex space-x-2">
+                            <span class="px-3 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs rounded-full">Blockchain</span>
+                            <span class="px-3 py-1 bg-gradient-to-r from-green-600 to-blue-600 text-white text-xs rounded-full">IoT</span>
+                            <span class="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs rounded-full">AI</span>
+                        </div>
+                    </div>
+                    <div class="text-gray-400 text-sm">
+                        <i class="bi bi-globe2 mr-1"></i>
+                        Available in 50+ countries
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- JavaScript for enhanced interactions -->
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.message-slide');
+            messages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.animation = 'slideInDown 0.5s ease-out reverse';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+        
+        // Enhanced dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.group');
+            dropdowns.forEach(function(dropdown) {
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu) {
+                    dropdown.addEventListener('mouseenter', function() {
+                        menu.classList.add('show');
+                    });
+                    dropdown.addEventListener('mouseleave', function() {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add loading animation to buttons
+        document.querySelectorAll('.btn-gradient').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.classList.contains('loading')) {
+                    this.classList.add('loading');
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-arrow-clockwise animate-spin mr-2"></i>Loading...';
+                    
+                    // Remove loading state after 2 seconds (or when page loads)
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('loading');
+                    }, 2000);
+                }
+            });
+        });
+        
+        // Parallax effect for background elements
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelectorAll('.parallax');
+            const speed = 0.5;
+            
+            parallax.forEach(function(element) {
+                const yPos = -(scrolled * speed);
+                element.style.transform = 'translateY(' + yPos + 'px)';
+            });
+        });
+        
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                } else {
+                    entry.target.style.animationPlayState = 'paused';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe animated elements
+        document.querySelectorAll('.animate-float, .animate-pulse, .animate-ping').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> 
