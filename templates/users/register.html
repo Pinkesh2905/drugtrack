@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
+{% comment %} {% load form_tags %} {% endcomment %}
 {% block title %}Register - DrugTrack{% endblock %}
 
 {% block content %}
@@ -106,7 +107,12 @@
                             <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="bi bi-briefcase mr-1 text-orange-500"></i>Role *
                             </label>
-                            {{ form.role|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            <select name="{{ form.role.name }}" id="{{ form.role.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" required>
+                                <option value="">Choose your role...</option>
+                                {% for choice in form.role.field.choices %}
+                                    <option value="{{ choice.0 }}" {% if form.role.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
                             <p class="mt-1 text-sm text-gray-500 flex items-center">
                                 <i class="bi bi-info-circle mr-1"></i>
                                 Select your role to access the appropriate dashboard and features.
@@ -124,7 +130,7 @@
                             <label for="{{ form.organization.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="bi bi-building mr-1 text-indigo-500"></i>Organization
                             </label>
-                            {{ form.organization|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            <input type="text" name="{{ form.organization.name }}" id="{{ form.organization.id_for_label }}" value="{{ form.organization.value|default:'' }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white">
                             <p class="mt-1 text-sm text-gray-500 flex items-center">
                                 <i class="bi bi-info-circle mr-1"></i>
                                 Hospital, Pharmaceutical Company, or Regulatory Body name (Optional)
@@ -142,7 +148,14 @@
                             <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="bi bi-telephone mr-1 text-pink-500"></i>Phone Number
                             </label>
-                            {{ form.phone_number|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
+                            <input type="tel" name="{{ form.phone_number.name }}" id="{{ form.phone_number.id_for_label }}" value="{{ form.phone_number.value|default:'' }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white">
+                            {% if form.phone_number.errors %}
+                                <div class="mt-1 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ form.phone_number.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div> focus:ring-pink-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
                             {% if form.phone_number.errors %}
                                 <div class="mt-1 text-sm text-red-600 flex items-center">
                                     <i class="bi bi-exclamation-circle mr-1"></i>
@@ -165,7 +178,7 @@
                                     <i class="bi bi-lock mr-1 text-red-500"></i>Password *
                                 </label>
                                 <div class="relative">
-                                    {{ form.password1|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" }}
+                                    <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" required>
                                     <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password1')">
                                         <i class="bi bi-eye text-gray-400" id="toggleIcon1"></i>
                                     </button>
@@ -184,7 +197,7 @@
                                     <i class="bi bi-lock-fill mr-1 text-red-500"></i>Confirm Password *
                                 </label>
                                 <div class="relative">
-                                    {{ form.password2|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" }}
+                                    <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" required>
                                     <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password2')">
                                         <i class="bi bi-eye text-gray-400" id="toggleIcon2"></i>
                                     </button>
