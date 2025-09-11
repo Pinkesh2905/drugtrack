@@ -36,7 +36,8 @@ class DrugBatch(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('inventory:verify_drug', kwargs={'batch_number': self.batch_number})
+        # *** FIX: Point to the URL name that accepts a batch_number ***
+        return reverse('inventory:verify_drug_detail', kwargs={'batch_number': self.batch_number})
 
     @property
     def is_expired(self):

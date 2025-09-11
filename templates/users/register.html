@@ -1,16 +1,28 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
-{% comment %} {% load form_tags %} {% endcomment %}
-{% block title %}Register - DrugTrack{% endblock %}
+{% block title %}Register - CureTrack{% endblock %}
 
 {% block content %}
+<style>
+    #subscription-section {
+        transition: max-height 0.7s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease-in-out, transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transform: translateY(-20px);
+    }
+    .subscription-card.selected-plan {
+        box-shadow: 0 0 0 3px theme('colors.teal.500'), 0 10px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-8px) scale(1.02);
+    }
+</style>
 <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
         <div class="text-center mb-8">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
                 <i class="bi bi-person-plus text-white text-2xl"></i>
             </div>
-            <h1 class="text-4xl font-bold text-white mb-2">Join DrugTrack</h1>
+            <h1 class="text-4xl font-bold text-white mb-2">Join CureTrack</h1>
             <p class="text-white/80 text-lg">Create your account to access the supply chain network</p>
         </div>
 
@@ -19,7 +31,7 @@
             <!-- Header -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-6 text-center">
                 <h2 class="text-2xl font-bold text-white">Create Account</h2>
-                <p class="text-white/80 mt-1">Join the DrugTrack Supply Chain Network</p>
+                <p class="text-white/80 mt-1">Join the CureTrack Supply Chain Network</p>
             </div>
             
             <!-- Form -->
@@ -110,7 +122,7 @@
                             <select name="{{ form.role.name }}" id="{{ form.role.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" required>
                                 <option value="">Choose your role...</option>
                                 {% for choice in form.role.field.choices %}
-                                    <option value="{{ choice.0 }}" {% if form.role.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                    <option value="{{ choice.0 }}" {% if form.role.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>{{ choice.1 }}</option>
                                 {% endfor %}
                             </select>
                             <p class="mt-1 text-sm text-gray-500 flex items-center">
@@ -155,13 +167,64 @@
                                     {{ form.phone_number.errors.0 }}
                                 </div>
                             {% endif %}
-                        </div> focus:ring-pink-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" }}
-                            {% if form.phone_number.errors %}
-                                <div class="mt-1 text-sm text-red-600 flex items-center">
-                                    <i class="bi bi-exclamation-circle mr-1"></i>
-                                    {{ form.phone_number.errors.0 }}
-                                </div>
-                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Subscription Plan Section (Conditional) -->
+                    <div id="subscription-section" class="space-y-6 hidden">
+                        <div class="border-l-4 border-teal-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Choose Your Subscription</h3>
+                            <p class="text-sm text-gray-500">Select a plan that fits your organization's needs.</p>
+                        </div>
+                        
+                        <input type="hidden" name="subscription_plan" id="subscription_plan_input" value="">
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                            <!-- Plan 1: Starter -->
+                            <div id="plan-starter" class="subscription-card border-2 border-gray-200 rounded-2xl p-6 text-center transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                                <h4 class="text-xl font-bold text-gray-800">Starter</h4>
+                                <p class="text-gray-500 text-sm mb-4">For small teams & startups</p>
+                                <p class="text-4xl font-extrabold text-gray-900 my-4">$99<span class="text-base font-medium text-gray-500">/mo</span></p>
+                                <ul class="space-y-3 text-left text-gray-600 my-6">
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Up to 10 users</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Basic Inventory Tracking</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Standard Reporting</li>
+                                    <li class="flex items-center"><i class="bi bi-x-circle text-gray-400 mr-2"></i> AI Demand Forecasting</li>
+                                    <li class="flex items-center"><i class="bi bi-x-circle text-gray-400 mr-2"></i> IoT Integration</li>
+                                </ul>
+                                <button type="button" data-plan="starter" class="choose-plan-btn w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-teal-500 hover:text-white transition-colors duration-300">Choose Plan</button>
+                            </div>
+                            
+                            <!-- Plan 2: Growth (Recommended) -->
+                            <div id="plan-growth" class="subscription-card border-2 border-gray-200 rounded-2xl p-6 text-center transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer relative">
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full">RECOMMENDED</div>
+                                <h4 class="text-xl font-bold text-gray-800">Growth</h4>
+                                <p class="text-gray-500 text-sm mb-4">For growing businesses</p>
+                                <p class="text-4xl font-extrabold text-teal-600 my-4">$299<span class="text-base font-medium text-gray-500">/mo</span></p>
+                                <ul class="space-y-3 text-left text-gray-600 my-6">
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Up to 50 users</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Advanced Inventory</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Customizable Reports</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> AI Demand Forecasting</li>
+                                    <li class="flex items-center"><i class="bi bi-x-circle text-gray-400 mr-2"></i> IoT Integration</li>
+                                </ul>
+                                <button type="button" data-plan="growth" class="choose-plan-btn w-full bg-teal-500 text-white py-3 rounded-lg font-semibold hover:bg-teal-600 transition-colors duration-300">Choose Plan</button>
+                            </div>
+                            
+                            <!-- Plan 3: Enterprise -->
+                            <div id="plan-enterprise" class="subscription-card border-2 border-gray-200 rounded-2xl p-6 text-center transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                                <h4 class="text-xl font-bold text-gray-800">Enterprise</h4>
+                                <p class="text-gray-500 text-sm mb-4">For large-scale operations</p>
+                                <p class="text-4xl font-extrabold text-gray-900 my-4">Contact Us</p>
+                                <ul class="space-y-3 text-left text-gray-600 my-6">
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Unlimited users</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Full Supply Chain Visibility</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Dedicated Support</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> AI Demand Forecasting</li>
+                                    <li class="flex items-center"><i class="bi bi-check-circle-fill text-teal-500 mr-2"></i> Full IoT Integration</li>
+                                </ul>
+                                <button type="button" data-plan="enterprise" class="choose-plan-btn w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-teal-500 hover:text-white transition-colors duration-300">Contact Sales</button>
+                            </div>
                         </div>
                     </div>
                     
@@ -179,7 +242,7 @@
                                 </label>
                                 <div class="relative">
                                     <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password1')">
+                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('{{ form.password1.id_for_label }}', 'toggleIcon1')">
                                         <i class="bi bi-eye text-gray-400" id="toggleIcon1"></i>
                                     </button>
                                 </div>
@@ -198,7 +261,7 @@
                                 </label>
                                 <div class="relative">
                                     <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white pr-10" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password2')">
+                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('{{ form.password2.id_for_label }}', 'toggleIcon2')">
                                         <i class="bi bi-eye text-gray-400" id="toggleIcon2"></i>
                                     </button>
                                 </div>
@@ -242,122 +305,25 @@
             </div>
         </div>
         
-        <!-- Role Information Card -->
-        <div class="mt-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4">
-                <h3 class="text-xl font-semibold text-white flex items-center">
-                    <i class="bi bi-info-circle mr-2"></i>Role Information
-                </h3>
-                <p class="text-white/80 text-sm mt-1">Choose the role that best describes your position in the supply chain</p>
-            </div>
-            
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Pharmaceutical Company -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 card-hover">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
-                                <i class="bi bi-building text-white text-xl"></i>
-                            </div>
-                            <h4 class="text-lg font-semibold text-blue-800">Pharmaceutical Company</h4>
-                        </div>
-                        <p class="text-blue-700 text-sm leading-relaxed">
-                            Manage drug production, batch tracking, quality control, and distribution to hospitals and pharmacies. Access advanced analytics and supply chain optimization tools.
-                        </p>
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">Production</span>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">Distribution</span>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">Analytics</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Hospital -->
-                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 card-hover">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                                <i class="bi bi-hospital text-white text-xl"></i>
-                            </div>
-                            <h4 class="text-lg font-semibold text-green-800">Hospital</h4>
-                        </div>
-                        <p class="text-green-700 text-sm leading-relaxed">
-                            Track inventory levels, monitor expiry dates, manage cold-chain storage for vaccines, and ensure patient safety through real-time drug authentication.
-                        </p>
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Inventory</span>
-                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Cold Chain</span>
-                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Safety</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Regulator -->
-                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200 card-hover">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center mr-4">
-                                <i class="bi bi-shield-check text-white text-xl"></i>
-                            </div>
-                            <h4 class="text-lg font-semibold text-amber-800">Regulator</h4>
-                        </div>
-                        <p class="text-amber-700 text-sm leading-relaxed">
-                            Monitor compliance, verify drug authenticity, oversee supply chain integrity, and ensure regulatory standards are maintained across all stakeholders.
-                        </p>
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs">Compliance</span>
-                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs">Verification</span>
-                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs">Oversight</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Patient -->
-                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200 card-hover">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4">
-                                <i class="bi bi-person text-white text-xl"></i>
-                            </div>
-                            <h4 class="text-lg font-semibold text-purple-800">Patient</h4>
-                        </div>
-                        <p class="text-purple-700 text-sm leading-relaxed">
-                            Verify drug authenticity using QR codes, track medication history, receive safety alerts, and access detailed information about your medications.
-                        </p>
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">QR Verification</span>
-                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">History</span>
-                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">Safety</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
-                    <div class="flex items-start">
-                        <i class="bi bi-lightbulb-fill text-blue-500 text-lg mr-3 mt-0.5"></i>
-                        <div>
-                            <p class="text-blue-800 font-medium mb-1">Getting Started</p>
-                            <p class="text-blue-700 text-sm leading-relaxed">
-                                After registration, you'll receive role-specific onboarding materials and access to training resources. 
-                                Your account will be verified within 24 hours for security purposes.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    function togglePassword(fieldName) {
-        const passwordField = document.getElementById('id_' + fieldName);
-        const toggleIcon = document.getElementById('toggleIcon' + (fieldName === 'password1' ? '1' : '2'));
+    function togglePassword(fieldId, iconId) {
+        const passwordField = document.getElementById(fieldId);
+        const toggleIcon = document.getElementById(iconId);
         
         if (passwordField.type === 'password') {
             passwordField.type = 'text';
-            toggleIcon.className = 'bi bi-eye-slash text-gray-400';
+            toggleIcon.className = 'bi bi-eye-slash text-gray-500';
         } else {
             passwordField.type = 'password';
             toggleIcon.className = 'bi bi-eye text-gray-400';
         }
     }
     
-    // Add smooth scrolling for better UX
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('form');
         const submitButton = form.querySelector('button[type="submit"]');
@@ -366,6 +332,95 @@
             submitButton.innerHTML = '<i class="bi bi-hourglass-split animate-spin mr-2"></i><span>Creating Account...</span>';
             submitButton.disabled = true;
         });
+
+        // --- New Subscription Logic ---
+        const roleSelect = document.getElementById('{{ form.role.id_for_label }}');
+        const subscriptionSection = document.getElementById('subscription-section');
+        const subscriptionInput = document.getElementById('subscription_plan_input');
+        const planCards = document.querySelectorAll('.subscription-card');
+        const planButtons = document.querySelectorAll('.choose-plan-btn');
+
+        function handleRoleChange() {
+            const selectedRole = roleSelect.value;
+            const isSubscriptionRole = selectedRole === 'pharma' || selectedRole === 'hospital';
+
+            if (isSubscriptionRole) {
+                subscriptionSection.classList.remove('hidden');
+                // Use a short timeout to allow the 'display' property to change before starting the transition
+                setTimeout(() => {
+                    subscriptionSection.style.maxHeight = subscriptionSection.scrollHeight + 'px';
+                    subscriptionSection.style.opacity = '1';
+                    subscriptionSection.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                subscriptionSection.style.maxHeight = '0';
+                subscriptionSection.style.opacity = '0';
+                subscriptionSection.style.transform = 'translateY(-20px)';
+                
+                // Hide the element completely after the transition
+                setTimeout(() => {
+                    if (roleSelect.value !== 'pharma' && roleSelect.value !== 'hospital') {
+                         subscriptionSection.classList.add('hidden');
+                    }
+                }, 700);
+                
+                // Clear selection if role is changed
+                subscriptionInput.value = '';
+                planCards.forEach(card => card.classList.remove('selected-plan', 'border-teal-500', 'shadow-2xl', 'shadow-teal-500/20'));
+                planButtons.forEach(btn => {
+                    btn.classList.remove('bg-teal-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-800');
+                    btn.innerHTML = btn.dataset.plan === 'enterprise' ? 'Contact Sales' : 'Choose Plan';
+                });
+                
+                const growthButton = document.querySelector('[data-plan="growth"]');
+                growthButton.classList.remove('bg-gray-200', 'text-gray-800');
+                growthButton.classList.add('bg-teal-500', 'text-white');
+            }
+        }
+
+        function selectPlan(e) {
+            e.stopPropagation(); // Prevent card click from firing twice
+            const selectedPlan = e.currentTarget.dataset.plan;
+            
+            subscriptionInput.value = selectedPlan;
+
+            planCards.forEach(card => {
+                card.classList.remove('selected-plan');
+                card.classList.remove('border-teal-500', 'shadow-2xl', 'shadow-teal-500/20');
+                card.classList.add('border-gray-200');
+            });
+            
+            const selectedCard = document.getElementById(`plan-${selectedPlan}`);
+            selectedCard.classList.add('selected-plan', 'border-teal-500', 'shadow-2xl', 'shadow-teal-500/20');
+            selectedCard.classList.remove('border-gray-200');
+
+            planButtons.forEach(btn => {
+                btn.classList.remove('bg-teal-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-800');
+                btn.innerHTML = btn.dataset.plan === 'enterprise' ? 'Contact Sales' : 'Choose Plan';
+            });
+
+            const selectedButton = selectedCard.querySelector('.choose-plan-btn');
+            selectedButton.classList.remove('bg-gray-200', 'text-gray-800');
+            selectedButton.classList.add('bg-teal-500', 'text-white');
+            selectedButton.innerHTML = `<i class="bi bi-check-circle-fill mr-2"></i> Selected`;
+        }
+
+        roleSelect.addEventListener('change', handleRoleChange);
+        
+        planButtons.forEach(button => {
+            button.addEventListener('click', selectPlan);
+        });
+
+        planCards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.querySelector('.choose-plan-btn').click();
+            });
+        });
+
+        // Initial check in case of form re-rendering with a value
+        handleRoleChange();
     });
 </script>
 {% endblock %}

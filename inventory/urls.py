@@ -7,8 +7,12 @@ urlpatterns = [
     # Main inventory views
     path('add/', views.add_batch, name='add_batch'),
     path('list/', views.list_batches, name='list_batches'),
-    path('verify/', views.verify_drug, name='verify_drug'),  # Changed from 'verify_drug_form'
-    path('verify/<str:batch_number>/', views.verify_drug, name='verify_drug_detail'),  # Changed name
+    
+    # The URL for the verification form (handles POST and initial GET)
+    path('verify/', views.verify_drug, name='verify_drug'),
+    
+    # The URL for showing the verification result for a specific batch
+    path('verify/<str:batch_number>/', views.verify_drug, name='verify_drug_detail'),
     
     # Batch detail and management
     path('batch/<uuid:batch_id>/', views.batch_detail, name='batch_detail'),
@@ -17,6 +21,7 @@ urlpatterns = [
     path('alert/all-expired/', views.alert_all_expired, name='alert_all_expired'),
     
     path('analytics/', views.analytics_view, name='analytics'),
+    
     # API endpoints
     path('api/verify-qr/', views.api_verify_qr, name='api_verify_qr'),
     path('api/stats/', views.inventory_stats, name='inventory_stats'),

@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 import json
+import csv
 
 from .models import DrugBatch
 from .forms import DrugBatchForm, DrugVerificationForm, DrugSearchForm
@@ -112,13 +113,22 @@ def list_batches(request):
 
 def verify_drug(request, batch_number=None):
     """
-    Verify drug authenticity by batch number
+    Verify drug authenticity by batch number from a form (POST) or URL (GET).
     """
     verification_form = DrugVerificationForm()
     batch = None
     verification_result = None
     
-    # Handle batch number from URL
+    # Handle POST request from the verification form
+    if request.method == 'POST':
+        verification_form = DrugVerificationForm(request.POST)
+        if verification_form.is_valid():
+            posted_batch_number = verification_form.cleaned_data['batch_number']
+            # *** FIX: Redirect to the URL that accepts a batch_number ***
+            # The URL name 'verify_drug_detail' matches '/verify/<str:batch_number>/'
+            return redirect('inventory:verify_drug_detail', batch_number=posted_batch_number)
+
+    # Handle GET request with batch number in the URL
     if batch_number:
         try:
             batch = DrugBatch.objects.get(batch_number__iexact=batch_number)
@@ -133,13 +143,6 @@ def verify_drug(request, batch_number=None):
                 'message': 'Invalid batch number. This drug batch does not exist in our system.',
                 'batch_number': batch_number
             }
-    
-    # Handle form submission
-    if request.method == 'POST':
-        verification_form = DrugVerificationForm(request.POST)
-        if verification_form.is_valid():
-            batch_number = verification_form.cleaned_data['batch_number']
-            return redirect('inventory:verify_drug', batch_number=batch_number)
 
     context = {
         'verification_form': verification_form,
@@ -187,14 +190,6 @@ def delete_batch(request, batch_id):
             'message': f'Error deleting batch: {str(e)}'
         })
 
-# inventory/views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse # Import HttpResponse
-import csv # Import the csv module
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from .models import DrugBatch
-# ... other imports
 
 @login_required
 def export_expired_csv(request):
@@ -217,12 +212,6 @@ def export_expired_csv(request):
 
     return response
 
-# inventory/views.py
-# ... other imports
-from django.views.decorators.http import require_POST
-from django.contrib import messages
-
-# ... other views
 
 @login_required
 @require_POST # Ensures this view only accepts POST requests
@@ -244,12 +233,6 @@ def alert_all_expired(request):
 
     return redirect('dashboard:regulator_dashboard')
 
-# inventory/views.py
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-# ... your other views ...
 
 @login_required
 def analytics_view(request):
@@ -259,13 +242,9 @@ def analytics_view(request):
     """
     context = {
         'title': 'Analytics Dashboard'
-        # You can pass real data here later
-        # 'total_batches': Batch.objects.count(),
-        # 'expired_drugs': Batch.objects.filter(expiry_date__lt=timezone.now()).count(),
     }
     return render(request, 'inventory/analytics.html', context)
 
-# ... rest of your views
 
 # API endpoint for QR code verification
 @csrf_exempt
@@ -278,11 +257,9 @@ def api_verify_qr(request):
             data = json.loads(request.body)
             qr_data = data.get('qr_data', '')
             
-            # Parse QR data
             parsed_data = verify_qr_data(qr_data)
             
             if parsed_data['is_valid']:
-                # Try to find the batch
                 try:
                     batch = DrugBatch.objects.get(
                         batch_number__iexact=parsed_data['batch_number']
@@ -319,20 +296,11 @@ def api_verify_qr(request):
                 })
                 
         except json.JSONDecodeError:
-            return JsonResponse({
-                'success': False,
-                'message': 'Invalid JSON data.'
-            })
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data.'})
         except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': f'Server error: {str(e)}'
-            })
+            return JsonResponse({'success': False, 'message': f'Server error: {str(e)}'})
     
-    return JsonResponse({
-        'success': False,
-        'message': 'Only POST method allowed.'
-    })
+    return JsonResponse({'success': False, 'message': 'Only POST method allowed.'})
 
 
 # Statistics endpoint for dashboard integration
